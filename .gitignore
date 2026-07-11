@@ -1,0 +1,48 @@
+# ── الأسرار والبيانات الحساسة — لا تُرفع أبداً ─────────────────────
+.env
+*.env
+deploy/ome-tracker.service.local
+
+# بيانات وقت التشغيل (هاشات كلمات المرور، عناوين IP للمشاهدين، الجلسات)
+data/
+*_auth.json
+banned_ips.json
+kicked_ips.json
+muted_ips.json
+geoip_cache.json
+geo_block.json
+stream_key.json
+stream_sessions.json
+stream_title.json
+next_match.json
+site_settings.json
+
+# شهادات SSL والمفاتيح
+*.pem
+*.key
+.htpasswd
+*_htpasswd
+
+# نسخ احتياطية وملفات مؤقتة
+server-backup/
+.revert_new/
+*.bak
+*.bak[0-9]
+*.tgz
+*.tar.gz
+*.old
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# ملفات مؤقتة للنشر
+tmp_*
+
+# نظام التشغيل
+.DS_Store
+Thumbs.db
+desktop.ini

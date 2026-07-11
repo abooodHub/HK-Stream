@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  OvenMediaEngine Server.xml — HK-Stream Deployment
+  IP: 85.190.101.80 | Domain: aboodfull2.site
+  Features: RTMP + SRT input, WebRTC + LLHLS output, ABR (1080p/720p/480p)
+-->
+<Server version="8">
+	<Name>OvenMediaEngine</Name>
+	<Type>origin</Type>
+	<IP>*</IP>
+	<PrivacyProtection>true</PrivacyProtection>
+	<StunServer>stun.ovenmediaengine.com:13478</StunServer>
+
+	<Modules>
+		<HTTP2>
+			<Enable>true</Enable>
+		</HTTP2>
+		<LLHLS>
+			<Enable>true</Enable>
+		</LLHLS>
+		<P2P>
+			<Enable>false</Enable>
+		</P2P>
+	</Modules>
+
+	<Bind>
+		<Managers>
+			<API>
+				<Port>8081</Port>
+				<WorkerCount>1</WorkerCount>
+			</API>
+		</Managers>
+		<Providers>
+			<RTMP>
+				<Port>1935</Port>
+				<WorkerCount>4</WorkerCount>
+			</RTMP>
+			<SRT>
+				<Port>9999</Port>
+				<WorkerCount>4</WorkerCount>
+			</SRT>
+		</Providers>
+		<Publishers>
+			<LLHLS>
+				<Port>3334</Port>
+				<WorkerCount>4</WorkerCount>
+			</LLHLS>
+			<WebRTC>
+				<Signalling>
+					<Port>3333</Port>
+					<WorkerCount>4</WorkerCount>
+				</Signalling>
+				<IceCandidates>
+					<IceCandidate>85.190.101.80:10000-10100/udp</IceCandidate>
+					<TcpForce>false</TcpForce>
+					<TcpRelayWorkerCount>4</TcpRelayWorkerCount>
+				</IceCandidates>
+			</WebRTC>
+		</Publishers>
+	</Bind>
+
+	<!-- API Token — generated during install, used by tracker & dashboard -->
+	<Managers>
+		<API>
+			<AccessToken>__OME_API_TOKEN__</AccessToken>
+		</API>
+	</Managers>
+
+	<Defaults>
+		<CrossDomains>
+			<Url>*</Url>
+		</CrossDomains>
+	</Defaults>
+
+	<VirtualHosts>
+		<VirtualHost>
+			<Name>default</Name>
+			<Distribution>aboodfull2.site</Distribution>
+			<Host>
+				<Names>
+					<Name>*</Name>
+				</Names>
+			</Host>
+
+			<AdmissionWebhooks>
+				<ControlServerUrl>http://127.0.0.1:9999/api/ome/webhook</ControlServerUrl>
+				<Timeout>3000</Timeout>
+			</AdmissionWebhooks>
+
+			<Applications>
+				<Application>
+					<Name>app</Name>
+					<Type>live</Type>
+					<OutputProfiles>
+						<OutputProfile>
+							<Name>default_profile</Name>
+							<OutputStreamName>stream</OutputStreamName>
+
+							<Playlist>
+								<Name>default</Name>
+								<FileName>master</FileName>
+								<Options>
+									<WebRtcAutoAbr>true</WebRtcAutoAbr>
+									<HLSChunklistPathDepth>0</HLSChunklistPathDepth>
+									<EnableTsPackaging>true</EnableTsPackaging>
+								</Options>
+								<RenditionTemplate>
+									<Name>${Height}p</Name>
+									<VideoTemplate>
+										<EncodingType>all</EncodingType>
+									</VideoTemplate>
+									<AudioTemplate>
+										<EncodingType>all</EncodingType>
+									</AudioTemplate>
+								</RenditionTemplate>
+							</Playlist>
+
+							<Encodes>
+								<!-- Source (Bypass) — original quality passthrough, no CPU load -->
+								<Video>
+									<Name>bypass_video</Name>
+									<Bypass>true</Bypass>
+								</Video>
+								<!-- 1080p Transcoded -->
+								<Video>
+									<Name>1080p_transcoded</Name>
+									<Codec>h264</Codec>
+									<Bitrate>5000000</Bitrate>
+									<Width>1920</Width>
+									<Height>1080</Height>
+									<Framerate>60</Framerate>
+									<Preset>faster</Preset>
+								</Video>
+								<!-- 720p Transcoded -->
+								<Video>
+									<Name>720p</Name>
+									<Codec>h264</Codec>
+									<Bitrate>2500000</Bitrate>
+									<Width>1280</Width>
+									<Height>720</Height>
+									<Framerate>60</Framerate>
+									<Preset>faster</Preset>
+								</Video>
+								<!-- 480p Transcoded -->
+								<Video>
+									<Name>480p</Name>
+									<Codec>h264</Codec>
+									<Bitrate>1000000</Bitrate>
+									<Width>854</Width>
+									<Height>480</Height>
+									<Framerate>30</Framerate>
+									<Preset>fast</Preset>
+								</Video>
+								<!-- AAC Audio -->
+								<Audio>
+									<Name>aac_audio</Name>
+									<Codec>aac</Codec>
+									<Bitrate>192000</Bitrate>
+									<Samplerate>48000</Samplerate>
+									<Channel>2</Channel>
+									<BypassIfMatch>
+										<Codec>eq</Codec>
+									</BypassIfMatch>
+								</Audio>
+								<!-- Opus Audio (for WebRTC) -->
+								<Audio>
+									<Name>opus_audio</Name>
+									<Codec>opus</Codec>
+									<Bitrate>128000</Bitrate>
+									<Samplerate>48000</Samplerate>
+									<Channel>2</Channel>
+									<BypassIfMatch>
+										<Codec>eq</Codec>
+									</BypassIfMatch>
+								</Audio>
+							</Encodes>
+						</OutputProfile>
+					</OutputProfiles>
+					<Providers>
+						<WebRTC>
+							<Timeout>30000</Timeout>
+						</WebRTC>
+						<RTMP>
+							<BlockDuplicateStreamName>false</BlockDuplicateStreamName>
+						</RTMP>
+						<SRT />
+					</Providers>
+					<Publishers>
+						<AppWorkerCount>8</AppWorkerCount>
+						<StreamWorkerCount>8</StreamWorkerCount>
+						<WebRTC>
+							<Timeout>30000</Timeout>
+							<Rtx>true</Rtx>
+							<Ulpfec>true</Ulpfec>
+							<JitterBuffer>true</JitterBuffer>
+							<CreateDefaultPlaylist>true</CreateDefaultPlaylist>
+						</WebRTC>
+						<LLHLS>
+							<OriginMode>true</OriginMode>
+							<ChunkDuration>0.5</ChunkDuration>
+							<PartHoldBack>2.0</PartHoldBack>
+							<SegmentDuration>6</SegmentDuration>
+							<SegmentCount>10</SegmentCount>
+							<CreateDefaultPlaylist>true</CreateDefaultPlaylist>
+							<CrossDomains>
+								<Url>*</Url>
+							</CrossDomains>
+						</LLHLS>
+					</Publishers>
+				</Application>
+			</Applications>
+		</VirtualHost>
+	</VirtualHosts>
+</Server>

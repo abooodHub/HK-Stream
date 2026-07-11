@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: فحص صياغة Python
+        run: python -m compileall -q tracker
+
+      - name: فحص صياغة JavaScript
+        run: |
+          for f in web/js/*.js; do node --check "$f"; done
+
+      - name: التأكد من عدم تسرّب أسرار
+        run: |
+          if grep -rEn 'e2c1aabe[0-9a-f]+|abood_api_key|-pw[[:space:]]+abood' tracker web config README.md 2>/dev/null; then
+            echo "::error::تسرّب سر محتمل في الملفات" >&2
+            exit 1
+          fi
+          echo "لا أسرار مكشوفة"

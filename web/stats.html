@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"/>
+  <meta name="theme-color" content="#07070f"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+  <title>H&amp;K — إحصائيات البث المباشر</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&family=Outfit:wght@600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/fonts.css?v=2">
+  <link rel="stylesheet" href="/css/common.css?v=303">
+  <style>
+    :root{--font:'Tajawal',sans-serif;--font-en:'Outfit',sans-serif;--bg:#07070f;--bg2:#0e0e1a;--card:rgba(255,255,255,.04);--border:rgba(255,255,255,.08);--text:#e8e8f0;--text2:rgba(255,255,255,.6);--gold:#f0c040;--gold-dim:rgba(240,192,64,.15);--green:#4ade80;--red:#ff5252;--ease:cubic-bezier(.4,0,.2,1)}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+    .st-header{display:flex;align-items:center;justify-content:space-between;padding:16px clamp(16px,4vw,32px);border-bottom:1px solid var(--border);backdrop-filter:blur(14px);position:sticky;top:0;z-index:50;background:rgba(7,7,15,.92)}
+    .st-brand{font-family:var(--font-en);font-size:1.3rem;font-weight:700;color:var(--gold);text-decoration:none}
+    .st-back{color:var(--text2);text-decoration:none;font-size:.85rem;display:flex;align-items:center;gap:4px;transition:color .2s}
+    .st-back:hover{color:var(--gold)}
+
+    .st-body{max-width:900px;margin:0 auto;padding:clamp(16px,4vw,32px)}
+
+    .st-status{display:flex;align-items:center;gap:12px;padding:20px 24px;border-radius:16px;background:var(--card);border:1px solid var(--border);margin-bottom:24px;transition:all .3s var(--ease)}
+    .st-status.online{border-color:rgba(74,222,128,.25);background:rgba(74,222,128,.05)}
+    .st-status.offline{border-color:rgba(255,82,82,.2);background:rgba(255,82,82,.04)}
+    .st-dot{width:12px;height:12px;border-radius:50%;background:var(--red);flex-shrink:0;transition:background .3s}
+    .st-status.online .st-dot{background:var(--green);box-shadow:0 0 12px rgba(74,222,128,.4);animation:pulse-green 2s infinite}
+    @keyframes pulse-green{0%,100%{box-shadow:0 0 4px rgba(74,222,128,.3)}50%{box-shadow:0 0 16px rgba(74,222,128,.5)}}
+    .st-status-text{font-size:1.05rem;font-weight:700}
+    .st-status.online .st-status-text{color:var(--green)}
+    .st-status.offline .st-status-text{color:var(--red)}
+    .st-uptime{font-size:.8rem;color:var(--text2);margin-right:auto;padding-right:12px}
+
+    .st-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+    .st-card{padding:20px;border-radius:14px;background:var(--card);border:1px solid var(--border);text-align:center;transition:transform .2s var(--ease),border-color .3s}
+    .st-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.14)}
+    .st-card-val{font-family:var(--font-en);font-size:2.2rem;font-weight:800;color:var(--gold);line-height:1.1;margin-bottom:4px}
+    .st-card-label{font-size:.82rem;color:var(--text2);font-weight:500}
+
+    .st-section{margin-top:24px}
+    .st-section-title{font-size:.9rem;font-weight:700;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+    .st-timeline{display:flex;align-items:flex-end;gap:3px;height:120px;padding:16px;border-radius:14px;background:var(--card);border:1px solid var(--border)}
+    .st-bar{flex:1;min-width:4px;background:var(--gold);border-radius:2px 2px 0 0;transition:height .3s var(--ease);opacity:.7}
+    .st-bar:hover{opacity:1}
+
+    .st-sessions{display:flex;flex-direction:column;gap:8px}
+    .st-session{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;background:var(--card);border:1px solid var(--border);font-size:.85rem}
+    .st-session-date{color:var(--text2);font-family:var(--font-en);min-width:100px}
+    .st-session-dur{color:var(--text2);min-width:60px;text-align:center}
+    .st-session-viewers{color:var(--gold);font-weight:700;font-family:var(--font-en);min-width:50px;text-align:center}
+    .st-session-bar{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden}
+    .st-session-fill{height:100%;border-radius:3px;background:var(--gold);transition:width .3s var(--ease)}
+
+    .st-empty{text-align:center;padding:48px 16px;color:var(--text2);font-size:.95rem}
+  </style>
+</head>
+<body>
+  <header class="st-header">
+    <a href="/" class="st-back">→ الرئيسية</a>
+    <a href="/" class="st-brand">H & K</a>
+  </header>
+
+  <main class="st-body">
+    <!-- Status -->
+    <div class="st-status offline" id="statusCard">
+      <div class="st-dot"></div>
+      <span class="st-status-text" id="statusText">غير متصل</span>
+      <span class="st-uptime" id="uptimeText"></span>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="st-grid">
+      <div class="st-card">
+        <div class="st-card-val" id="kpiViewers">0</div>
+        <div class="st-card-label">مشاهد حالياً</div>
+      </div>
+      <div class="st-card">
+        <div class="st-card-val" id="kpiPeak">0</div>
+        <div class="st-card-label">الأعلى اليوم</div>
+      </div>
+      <div class="st-card">
+        <div class="st-card-val" id="kpiBitrate">0</div>
+        <div class="st-card-label">معدل البت (kbps)</div>
+      </div>
+      <div class="st-card">
+        <div class="st-card-val" id="kpiSessions">0</div>
+        <div class="st-card-label">جلسات البث</div>
+      </div>
+    </div>
+
+    <!-- Viewer Timeline -->
+    <div class="st-section">
+      <div class="st-section-title">المشاهدون خلال الساعة</div>
+      <div class="st-timeline" id="timeline">
+        <div class="st-empty">في انتظار البيانات...</div>
+      </div>
+    </div>
+
+    <!-- Recent Sessions -->
+    <div class="st-section">
+      <div class="st-section-title">جلسات البث الأخيرة</div>
+      <div class="st-sessions" id="sessionsList">
+        <div class="st-empty">لا توجد جلسات بعد</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  var _viewersHistory = [];
+  var _peakToday = 0;
+  var _evtSource = null;
+
+  function fmtDuration(s) {
+    if (!s) return '0 ث';
+    var h = Math.floor(s / 3600);
+    var m = Math.floor((s % 3600) / 60);
+    var sec = s % 60;
+    if (h > 0) return h + ' س ' + m + ' د';
+    if (m > 0) return m + ' د ' + sec + ' ث';
+    return sec + ' ث';
+  }
+
+  function fmtTime(ts) {
+    if (!ts) return '--:--';
+    var d = new Date(ts * 1000);
+    return d.toLocaleTimeString('ar-SA', {hour:'2-digit', minute:'2-digit'});
+  }
+
+  function fmtDate(ts) {
+    if (!ts) return '--';
+    var d = new Date(ts * 1000);
+    return d.toLocaleDateString('ar-SA', {month:'short', day:'numeric'}) + ' ' + fmtTime(ts);
+  }
+
+  function renderTimeline() {
+    var el = document.getElementById('timeline');
+    if (_viewersHistory.length === 0) { el.innerHTML = '<div class="st-empty">في انتظار البيانات...</div>'; return; }
+    var max = Math.max.apply(null, _viewersHistory.map(function(v){return v.count||0}), 1);
+    var bars = _viewersHistory.map(function(v) {
+      var h = Math.max(4, (v.count / max) * 100);
+      return '<div class="st-bar" style="height:' + h + '%" title="' + v.count + ' مشاهد"></div>';
+    }).join('');
+    el.innerHTML = bars;
+  }
+
+  function renderSessions(sessions) {
+    var el = document.getElementById('sessionsList');
+    if (!sessions || sessions.length === 0) { el.innerHTML = '<div class="st-empty">لا توجد جلسات بعد</div>'; return; }
+    var peakAll = Math.max.apply(null, sessions.map(function(s){return s.peak_viewers||0}), 1);
+    el.innerHTML = sessions.slice(0, 10).map(function(s) {
+      var pct = Math.min(100, ((s.peak_viewers || 0) / peakAll) * 100);
+      return '<div class="st-session">' +
+        '<span class="st-session-date">' + fmtDate(s.started_at) + '</span>' +
+        '<span class="st-session-dur">' + fmtDuration(s.duration_s) + '</span>' +
+        '<span class="st-session-viewers">' + (s.peak_viewers || 0) + '</span>' +
+        '<div class="st-session-bar"><div class="st-session-fill" style="width:' + pct + '%"></div></div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function connectSSE() {
+    _evtSource = new EventSource('/tracker-api/public/stats/live');
+    _evtSource.onmessage = function(e) {
+      try {
+        var d = JSON.parse(e.data);
+        var online = d.online;
+        var viewers = d.viewers || 0;
+
+        var card = document.getElementById('statusCard');
+        var stxt = document.getElementById('statusText');
+        var utxt = document.getElementById('uptimeText');
+
+        if (online) {
+          card.className = 'st-status online';
+          stxt.textContent = 'مباشر';
+          utxt.textContent = d.uptime_s ? 'منذ ' + fmtDuration(d.uptime_s) : '';
+        } else {
+          card.className = 'st-status offline';
+          stxt.textContent = 'غير متصل';
+          utxt.textContent = '';
+        }
+
+        document.getElementById('kpiViewers').textContent = viewers;
+        if (viewers > _peakToday) _peakToday = viewers;
+        document.getElementById('kpiPeak').textContent = _peakToday;
+        document.getElementById('kpiBitrate').textContent = d.kbps || 0;
+
+        _viewersHistory.push({ts: Date.now(), count: viewers});
+        if (_viewersHistory.length > 120) _viewersHistory.shift();
+        renderTimeline();
+      } catch(err) {}
+    };
+    _evtSource.onerror = function() {
+      _evtSource.close();
+      setTimeout(connectSSE, 5000);
+    };
+  }
+
+  function loadSessions() {
+    fetch('/tracker-api/sessions').then(function(r){return r.json()}).then(function(d){
+      var sessions = d.sessions || [];
+      document.getElementById('kpiSessions').textContent = sessions.length;
+      renderSessions(sessions);
+    }).catch(function(){});
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    connectSSE();
+    loadSessions();
+    setInterval(loadSessions, 30000);
+  });
+  </script>
+</body>
+</html>

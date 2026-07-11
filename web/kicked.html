@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <meta name="theme-color" content="#07070f"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+  <title>تم طردك — H&K Stream</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/common.css?v=200"/>
+  <style>
+    :root{--font:'Outfit',sans-serif}
+    .lock-page{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .lock-card{
+      background:rgba(14,14,26,.94);
+      border:1px solid rgba(245,158,11,.25);border-radius:var(--radius-lg);
+      padding:clamp(44px,8vw,68px) clamp(32px,6vw,56px);
+      width:480px;max-width:100%;text-align:center;
+      box-shadow:var(--shadow),0 0 80px -30px rgba(245,158,11,.18);
+      animation:fadeUp .55s var(--ease);position:relative;
+    }
+    .lock-card::before{
+      content:'';position:absolute;inset:0;border-radius:var(--radius-lg);padding:1px;pointer-events:none;
+      background:linear-gradient(135deg,rgba(245,158,11,.30) 0%,transparent 55%);
+      -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;mask-composite:exclude;
+    }
+    .lock-icon{font-size:3.8rem;margin-bottom:20px;animation:float 3.5s ease-in-out infinite;display:block;filter:drop-shadow(0 0 20px rgba(245,158,11,.45))}
+    .lock-title{font-size:1.7rem;font-weight:800;color:var(--amber);margin-bottom:10px}
+    .lock-msg{color:var(--text2);font-size:.95rem;line-height:1.8;margin-bottom:28px}
+    .countdown-box{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.22);border-radius:var(--radius-sm);padding:18px 28px;margin-bottom:28px}
+    .countdown-val{font-family:var(--font-en);font-size:2.2rem;font-weight:800;color:var(--amber);letter-spacing:3px}
+    .countdown-lbl{font-size:.75rem;color:var(--text3);margin-top:5px}
+    .lock-home{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:20px;font-size:.88rem;font-weight:700;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.28);color:var(--amber);cursor:pointer;text-decoration:none;transition:all .22s var(--ease)}
+    .lock-home:hover{background:rgba(245,158,11,.18);transform:translateY(-1px)}
+    .lock-brand{font-family:var(--font-en);font-size:.7rem;font-weight:700;letter-spacing:3px;color:var(--text3);margin-top:24px}
+  </style>
+</head>
+<body>
+<div class="lock-page">
+  <div class="lock-card">
+    <span class="lock-icon">⏳</span>
+    <div class="lock-title">تم طردك مؤقتاً</div>
+    <div class="lock-msg">تم طردك من البث المباشر من قِبل المسؤول.<br>يمكنك المحاولة مجدداً بعد مرور ساعة كاملة.</div>
+    <div class="countdown-box">
+      <div class="countdown-val" id="countdown">60:00</div>
+      <div class="countdown-lbl">الوقت المتبقي قبل إمكانية العودة</div>
+    </div>
+    <a href="/" class="lock-home">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      العودة للرئيسية
+    </a>
+    <div class="lock-brand">H&amp;K STREAM</div>
+  </div>
+</div>
+<script>
+(function(){
+  var secs = 3600, el = document.getElementById('countdown');
+  function tick() {
+    if (secs <= 0) { el.textContent = '00:00'; return; }
+    secs--;
+    el.textContent = String(Math.floor(secs/60)).padStart(2,'0') + ':' + String(secs%60).padStart(2,'0');
+    setTimeout(tick, 1000);
+  }
+  tick();
+})();
+</script>
+</body>
+</html>

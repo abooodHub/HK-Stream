@@ -1,0 +1,24 @@
+[Unit]
+Description=HLS Stream Tracker API
+After=network.target nginx.service
+
+[Service]
+# ⚠️ لا تكتب المفاتيح هنا مباشرة على الإنتاج — استخدم EnvironmentFile بدلاً منها.
+# انسخ .env.example إلى /opt/ome-tracker/.env واملأ القيم، ثم فعّل السطر التالي:
+EnvironmentFile=/opt/ome-tracker/.env
+
+# (بديل) يمكن التمرير المباشر لكنه أقل أماناً:
+# Environment="FOOTBALL_API_KEY=__FILL_ME__"
+# Environment="MEDIAMTX_API_HOST=127.0.0.1"
+# Environment="MEDIAMTX_API_PORT=9997"
+# Environment="MEDIAMTX_PATH_NAME=stream"
+
+ExecStart=/usr/bin/python3 -u /opt/ome-tracker/tracker_rtmp.py
+WorkingDirectory=/opt/ome-tracker
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

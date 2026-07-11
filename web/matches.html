@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <meta name="theme-color" content="#07070f"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+  <title>H&amp;K — جدول المباريات</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/common.css?v=301">
+  <link rel="stylesheet" href="/css/fonts.css?v=2">
+  <!-- player.css merged into common.css -->
+  <style>
+  :root{--font:'Outfit',sans-serif}
+  body{padding-bottom:env(safe-area-inset-bottom,0px)}
+
+  /* ═══ HEADER ═══ */
+  .mp-header{
+    display:flex;align-items:center;justify-content:center;
+    padding:14px clamp(14px,3vw,26px);
+    background:rgba(10,10,18,.92);
+    border-bottom:1px solid var(--border);
+    backdrop-filter:blur(14px);
+    position:sticky;top:0;z-index:50;
+  }
+  .mp-back{
+    position:absolute;right:clamp(14px,3vw,26px);top:50%;transform:translateY(-50%);
+    display:flex;align-items:center;gap:6px;
+    color:var(--text2);text-decoration:none;font-size:.82rem;
+    padding:6px 13px;border-radius:20px;border:1px solid var(--line);
+    background:rgba(255,255,255,.04);transition:background .2s,color .2s;
+  }
+  .mp-back:hover{background:rgba(255,255,255,.08);color:var(--text)}
+  .mp-title{
+    font-size:.95rem;font-weight:700;color:var(--text);
+    display:flex;align-items:center;gap:8px;
+  }
+  .mp-refresh-btn{
+    position:absolute;left:clamp(14px,3vw,26px);top:50%;transform:translateY(-50%);
+    background:rgba(255,255,255,.05);border:1px solid var(--line);
+    border-radius:8px;color:var(--text2);cursor:pointer;
+    padding:6px 9px;display:flex;align-items:center;
+    transition:background .2s,color .2s;
+  }
+  .mp-refresh-btn:hover{background:rgba(201,162,39,.1);color:var(--gold)}
+  .mp-refresh-btn.spinning svg{animation:spin .7s linear infinite}
+
+  /* ── Live badge in title ── */
+  .live-section-badge{
+    display:inline-flex;align-items:center;gap:5px;
+    background:rgba(220,40,40,.15);color:#ff5252;
+    border:1px solid rgba(220,40,40,.25);
+    border-radius:20px;padding:2px 10px;font-size:.7rem;font-weight:700;
+  }
+  .live-dot-tab{
+    display:inline-block;width:6px;height:6px;border-radius:50%;
+    background:currentColor;
+    animation:pulse-dot-red 1.2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot-red{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.65)}}
+  @keyframes pulse-badge-red{0%,100%{opacity:1}50%{opacity:.6}}
+
+  /* ═══ DAY CARDS ═══ */
+  .day-tabs{
+    max-width:1340px;margin:18px auto 0;
+    padding:0 clamp(14px,3vw,26px);
+    display:flex;flex-direction:row;gap:8px;
+    overflow-x:auto;scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    justify-content:center;
+  }
+  .day-tabs::-webkit-scrollbar{display:none}
+  .day-strip{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:5px;flex-shrink:0;
+    min-width:86px;padding:12px 10px 10px;
+    border-radius:14px;
+    background:rgba(12,12,22,.75);
+    border:1px solid rgba(255,255,255,.07);
+    border-bottom:3px solid transparent;
+    cursor:pointer;
+    scroll-snap-align:start;
+    transition:all .22s var(--ease);
+    user-select:none;
+    position:relative;overflow:hidden;
+    text-align:center;
+  }
+  .day-strip::before{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(255,255,255,.04),transparent 70%);
+    pointer-events:none;
+  }
+  .day-strip:hover{
+    background:rgba(255,255,255,.06);
+    transform:translateY(-2px);
+    box-shadow:0 6px 20px -6px rgba(0,0,0,.5);
+  }
+  .day-strip.is-today{
+    border-bottom-color:var(--gold);
+    background:rgba(201,162,39,.09);
+  }
+  .day-strip.is-today .ds-name{color:var(--gold-l)}
+  .day-strip.has-live{
+    border-bottom-color:#e03030;
+    background:rgba(220,40,40,.07);
+  }
+  .day-strip.active{
+    box-shadow:0 8px 24px -8px rgba(0,0,0,.55);
+    transform:translateY(-2px);
+  }
+  .day-strip.active.is-today{
+    background:rgba(201,162,39,.16);
+    border-bottom-color:var(--gold);
+    box-shadow:0 8px 24px -8px rgba(201,162,39,.35);
+  }
+  .day-strip.active.has-live:not(.is-today){
+    background:rgba(220,40,40,.13);
+    border-bottom-color:#e03030;
+    box-shadow:0 8px 24px -8px rgba(220,40,40,.3);
+  }
+  .day-strip.active:not(.is-today):not(.has-live):not(.is-all){
+    border-bottom-color:var(--cyan);
+    background:rgba(34,211,238,.08);
+    box-shadow:0 8px 24px -8px rgba(34,211,238,.22);
+  }
+  .day-strip.active:not(.is-today):not(.has-live):not(.is-all) .ds-name{color:var(--cyan)}
+  .day-strip.is-all{border-bottom-color:transparent}
+  .day-strip.is-all .ds-name{color:var(--text2)}
+  .day-strip.is-all.active{
+    border-bottom-color:var(--indigo);
+    background:rgba(129,140,248,.09);
+    box-shadow:0 8px 24px -8px rgba(129,140,248,.25);
+  }
+  .day-strip.is-all.active .ds-name{color:#a5b4fc}
+  .ds-name{
+    font-size:.88rem;font-weight:800;
+    color:var(--text);line-height:1.2;
+    letter-spacing:.01em;
+  }
+  .ds-count{
+    font-size:.65rem;font-weight:700;
+    color:var(--text3);
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.07);
+    padding:2px 8px;border-radius:20px;
+    transition:color .2s;white-space:nowrap;
+  }
+  .day-strip.active .ds-count{color:var(--text2)}
+  .ds-live-pill{
+    display:inline-flex;align-items:center;gap:3px;
+    font-size:.58rem;font-weight:800;
+    color:#ff5252;
+    background:rgba(220,40,40,.15);
+    padding:2px 7px;border-radius:20px;
+    border:1px solid rgba(220,40,40,.3);
+    letter-spacing:.2px;
+  }
+  .ds-live-dot{
+    width:5px;height:5px;border-radius:50%;
+    background:#ff5252;flex-shrink:0;
+    animation:pulse-dot-red 1s ease-in-out infinite;
+  }
+
+  /* ═══ SECTION SEPARATORS ═══ */
+  .matches-section{padding-bottom:50px}
+  .section-sep{
+    display:flex;align-items:center;gap:12px;
+    margin:6px 0;
+    opacity:.5;
+  }
+  .section-sep::before,.section-sep::after{
+    content:'';flex:1;height:1px;
+    background:linear-gradient(to var(--dir,right),transparent,rgba(201,162,39,.35),transparent);
+  }
+  .section-sep::before{--dir:right}
+  .section-sep::after{--dir:left}
+  .section-sep-icon{
+    width:24px;height:24px;border-radius:50%;flex-shrink:0;
+    background:rgba(201,162,39,.08);border:1px solid rgba(201,162,39,.22);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .section-sep-icon svg{width:10px;height:10px;fill:var(--gold)}
+
+  .matches-list{gap:0}
+  .matches-list .comp-block{
+    margin-bottom:0;
+    border-radius:var(--radius) var(--radius) 0 0;
+  }
+  .matches-list .comp-block+.section-sep+.comp-block,
+  .matches-list .comp-block+.comp-block{
+    border-radius:0;border-top:none;
+  }
+  .matches-list .comp-block:last-child{
+    border-radius:0 0 var(--radius) var(--radius);
+    margin-bottom:0;
+  }
+
+  /* ── Live row enhanced ── */
+  .m-live{
+    background:rgba(220,40,40,.08)!important;
+    box-shadow:inset 3px 0 0 rgba(220,40,40,.6)!important;
+    border-right:3px solid rgba(220,40,40,.5);
+  }
+  .m-live .m-tname{color:#fff}
+  .m-minute{
+    font-family:var(--font-en);font-size:.65rem;font-weight:800;
+    color:#ff7070;
+    animation:pulse-badge-red 1.8s ease-in-out infinite;
+    display:block;margin-top:2px;
+  }
+  .m-soon{
+    background:rgba(201,162,39,.04)!important;
+    box-shadow:inset 3px 0 0 rgba(201,162,39,.4)!important;
+  }
+  .m-soon .m-tname{color:var(--gold-xl)}
+
+  /* ── Live hero card ── */
+  .live-hero-card{
+    display:block;text-decoration:none;
+    background:linear-gradient(135deg,rgba(220,40,40,.14) 0%,rgba(14,14,26,.85) 60%);
+    border:1px solid rgba(220,40,40,.3);
+    border-radius:var(--radius);
+    padding:18px 20px 14px;
+    margin-bottom:16px;
+    position:relative;overflow:hidden;
+    cursor:pointer;
+    transition:border-color .2s,box-shadow .2s;
+  }
+  .live-hero-card:hover{
+    border-color:rgba(220,40,40,.55);
+    box-shadow:0 0 32px rgba(220,40,40,.15);
+  }
+  .live-hero-card::before{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(220,40,40,.08),transparent 70%);
+    pointer-events:none;
+  }
+  .hero-top{
+    display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
+  }
+  .hero-live-badge{
+    display:inline-flex;align-items:center;gap:5px;
+    background:rgba(220,40,40,.18);color:#ff5252;
+    border:1px solid rgba(220,40,40,.35);
+    border-radius:20px;padding:3px 12px;
+    font-size:.72rem;font-weight:800;
+    animation:pulse-badge-red 1.2s ease-in-out infinite;
+  }
+  .hero-comp{font-size:.75rem;color:var(--text3);font-weight:600}
+  .hero-teams{
+    display:flex;align-items:center;justify-content:center;
+    gap:16px;margin-bottom:14px;
+  }
+  .hero-team{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:80px}
+  .hero-crest{width:54px;height:54px;object-fit:contain}
+  .hero-name{
+    font-size:.88rem;font-weight:800;
+    color:var(--text);text-align:center;line-height:1.3;
+  }
+  .hero-mid{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:56px}
+  .hero-score{
+    font-size:1.6rem;font-weight:900;
+    color:#fff;font-family:var(--font-en);
+    letter-spacing:2px;
+  }
+  .hero-minute{
+    font-size:.72rem;font-weight:800;color:#ff7070;
+    animation:pulse-badge-red 1.8s ease-in-out infinite;
+  }
+  .hero-cta{
+    text-align:center;font-size:.76rem;font-weight:700;
+    color:rgba(255,82,82,.75);
+  }
+
+  /* ── Responsive ── */
+  @media(max-width:480px){
+    .mp-header{padding:11px clamp(10px,3vw,16px)}
+    .mp-title{font-size:.86rem}
+    .mp-back{padding:6px 10px;font-size:.76rem}
+    .day-strip{min-width:74px;padding:10px 8px 9px}
+    .ds-name{font-size:.8rem}
+    .ds-count{font-size:.6rem;padding:1px 6px}
+    .hero-crest{width:42px;height:42px}
+    .hero-score{font-size:1.3rem}
+    .hero-name{font-size:.8rem}
+    .hero-teams{gap:10px}
+  }
+  @media(max-width:380px){
+    .mp-header{padding:10px 12px}
+    .mp-title{font-size:.82rem}
+    .mp-back{font-size:.72rem;padding:5px 8px}
+    .day-tabs{gap:6px;padding:0 clamp(10px,2vw,14px);margin-top:12px}
+    .day-strip{min-width:66px;padding:9px 7px 8px;border-radius:12px}
+    .ds-name{font-size:.76rem}
+  }
+  </style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="mp-header">
+  <a href="/" class="mp-back">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    العودة للبث
+  </a>
+  <div class="mp-title">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="var(--gold)"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zm-7-7h5v5h-5z"/></svg>
+    جدول المباريات
+    <span id="liveBadge" style="display:none" class="live-section-badge">
+      <span class="live-dot-tab"></span> مباشر
+    </span>
+  </div>
+  <button class="mp-refresh-btn" id="refreshBtn" onclick="refresh()" title="تحديث">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+  </button>
+</header>
+
+<!-- ═══ DAY TABS ═══ -->
+<div class="day-tabs" id="dayTabs"></div>
+
+<!-- ═══ MATCHES LIST ═══ -->
+<section class="matches-section">
+  <div id="matchesList" class="matches-list">
+    <div class="matches-loading">
+      <div class="matches-spinner"></div>
+      <span>جاري تحميل المباريات…</span>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  H&amp;K Stream &mdash; <a href="/">العودة للبث المباشر</a>
+</footer>
+
+<script src="/js/matches-common.js?v=6"></script>
+<script>
+
+var _allMatches = [];
+var _activeDay  = 'all';
+
+/* ═══ DAY STRIPS ═══ */
+function buildTabs(matches) {
+  var days = {}, dayOrder = [];
+  matches.forEach(function(m) {
+    var ds = saudiDateStr(m.utcDate);
+    if (!days[ds]) { days[ds] = {count:0,live:0}; dayOrder.push(ds); }
+    days[ds].count++;
+    if (STATUS_LIVE[m.status]) days[ds].live++;
+  });
+  var tabs = document.getElementById('dayTabs');
+  if (!tabs) return;
+  var totalLive = matches.filter(function(m){return STATUS_LIVE[m.status];}).length;
+  var todayDs   = nowSaudiDateStr();
+
+  /* كرت "الكل" */
+  var html = '<div class="day-strip is-all'+(_activeDay==='all'?' active':'')+'" onclick="setDay(\'all\')">' +
+    '<span class="ds-name">الكل</span>' +
+    '<span class="ds-count">'+matches.length+'</span>' +
+    (totalLive ? '<span class="ds-live-pill"><span class="ds-live-dot"></span>مباشر</span>' : '') +
+  '</div>';
+
+  /* كرت لكل يوم */
+  dayOrder.forEach(function(ds) {
+    var d   = days[ds];
+    var lbl = dayLabel(ds);
+    var cls = 'day-strip' +
+      (ds === todayDs    ? ' is-today' : '') +
+      (d.live            ? ' has-live' : '') +
+      (_activeDay === ds ? ' active'   : '');
+    html += '<div class="'+cls+'" onclick="setDay(\''+ds+'\')">'+
+      '<span class="ds-name">'+lbl+'</span>'+
+      '<span class="ds-count">'+d.count+'</span>'+
+      (d.live ? '<span class="ds-live-pill"><span class="ds-live-dot"></span>مباشر</span>' : '') +
+    '</div>';
+  });
+
+  tabs.innerHTML = html;
+}
+
+/* ═══ RENDER MATCH ROW (override for minute display) ═══ */
+function renderMatchFull(m) {
+  var s = m.status, live = STATUS_LIVE[s], done = STATUS_DONE[s], post = s === 'POSTPONED' || s === 'CANCELLED';
+  var sc = m.score, hasScore = sc.home !== null && sc.away !== null;
+  var now = Date.now();
+  var diff = new Date(m.utcDate).getTime() - now;
+  var soon = !live && !done && !post && diff > 0 && diff < 30*60*1000;
+
+  var badge = '';
+  if (live) {
+    var min = getMatchMinute(m);
+    badge = '<span class="m-badge live">⚽ مباشر</span>';
+    if (min) badge += '<span class="m-minute" data-mid="'+m.id+'">'+min+'</span>';
+  } else if (done)  badge = '<span class="m-badge done">انتهت</span>';
+  else if (post)    badge = '<span class="m-badge post">'+(s==='POSTPONED'?'مؤجلة':'ملغاة')+'</span>';
+  else if (soon)    badge = '<span class="m-badge" style="background:rgba(220,40,40,.18);color:#ff5252;border:1px solid rgba(220,40,40,.35);animation:pulse-badge-red 1s ease-in-out infinite">🔴 قريباً</span>';
+  else              badge = '<span class="m-time"><span class="m-day-lbl">'+saudiDayName(m.utcDate)+'</span>'+saudiTime(m.utcDate)+'</span>';
+
+  var score = (live||done) && hasScore
+    ? '<div class="m-score">'+sc.home+' — '+sc.away+'</div>'
+    : '';
+  var htScore = (live||done) && sc.htHome !== null && sc.htHome !== undefined
+    ? '<div style="font-size:.58rem;color:var(--text3);margin-top:1px">('+sc.htHome+' — '+sc.htAway+' ش.أ)</div>'
+    : '';
+
+  var cntdn = '';
+  if (!live && !done && !post) {
+    if (diff > 0) cntdn = '<div class="m-countdown" data-cntdn="'+m.utcDate+'">…</div>';
+  }
+
+  var hCrest = m.homeTeam.crest ? '<img class="m-crest" src="'+escMatch(m.homeTeam.crest)+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '';
+  var aCrest = m.awayTeam.crest ? '<img class="m-crest" src="'+escMatch(m.awayTeam.crest)+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '';
+
+  var rowCls = 'm-row' + (live?' m-live':'') + (done?' m-done':'') + (soon?' m-soon':'');
+
+  return '<div class="'+rowCls+'">' +
+    '<div class="m-team m-home"><span class="m-tname">'+teamAr(m.homeTeam.shortName)+'</span>'+hCrest+'</div>' +
+    '<div class="m-middle">'+badge+score+htScore+cntdn+'</div>' +
+    '<div class="m-team m-away">'+aCrest+'<span class="m-tname">'+teamAr(m.awayTeam.shortName)+'</span></div>' +
+    '</div>';
+}
+
+/* ═══ LIVE HERO CARD ═══ */
+function renderLiveHeroCard(m) {
+  var sc = m.score, hasScore = sc.home !== null && sc.away !== null;
+  var min = getMatchMinute(m);
+  var arComp = COMP_AR[m.competition.code] || escMatch(m.competition.name);
+  var hCrest = m.homeTeam.crest
+    ? '<img class="hero-crest" src="'+escMatch(m.homeTeam.crest)+'" alt="" loading="lazy" onerror="this.style.opacity=\'0\'">'
+    : '<div class="hero-crest" style="opacity:0"></div>';
+  var aCrest = m.awayTeam.crest
+    ? '<img class="hero-crest" src="'+escMatch(m.awayTeam.crest)+'" alt="" loading="lazy" onerror="this.style.opacity=\'0\'">'
+    : '<div class="hero-crest" style="opacity:0"></div>';
+  var scoreHtml = hasScore
+    ? '<div class="hero-score">'+sc.home+' — '+sc.away+'</div>'
+    : '<div class="hero-score" style="font-size:1rem;opacity:.5">VS</div>';
+  var minuteHtml = min ? '<div class="hero-minute">'+min+'</div>' : '';
+  return '<a href="/" class="live-hero-card">' +
+    '<div class="hero-top">' +
+      '<span class="hero-live-badge"><span class="live-dot-tab"></span> مباشر على H&K</span>' +
+      '<span class="hero-comp">'+arComp+'</span>' +
+    '</div>' +
+    '<div class="hero-teams">' +
+      '<div class="hero-team">'+hCrest+'<span class="hero-name">'+teamAr(m.homeTeam.shortName)+'</span></div>' +
+      '<div class="hero-mid">'+scoreHtml+minuteHtml+'</div>' +
+      '<div class="hero-team">'+aCrest+'<span class="hero-name">'+teamAr(m.awayTeam.shortName)+'</span></div>' +
+    '</div>' +
+    '<div class="hero-cta">▶ اضغط لمشاهدة البث المباشر</div>' +
+  '</a>';
+}
+
+/* ═══ RENDER GROUPS WITH SEPARATORS ═══ */
+function renderActive() {
+  var filtered = _activeDay === 'all'
+    ? _allMatches
+    : _allMatches.filter(function(m){ return saudiDateStr(m.utcDate) === _activeDay; });
+  var list = document.getElementById('matchesList');
+  if (!list) return;
+  if (!filtered.length) { list.innerHTML = '<div class="matches-empty">لا توجد مباريات</div>'; return; }
+
+  /* Group by competition */
+  var groups = {}, order = [];
+  filtered.forEach(function(m) {
+    var key = m.competition.code;
+    if (!groups[key]) { groups[key] = {comp:m.competition, items:[]}; order.push(key); }
+    groups[key].items.push(m);
+  });
+
+  var sepSvg = '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>';
+
+  /* بطاقة مباشر الآن في أعلى القائمة */
+  var liveMatches = filtered.filter(function(m){ return STATUS_LIVE[m.status]; });
+  var html = liveMatches.length ? renderLiveHeroCard(liveMatches[0]) : '';
+
+  /* ── Sort priority: live → soon → upcoming (soonest first) → finished (latest first) → postponed/cancelled ── */
+  var matchSort = function(a, b) {
+    var aLive = STATUS_LIVE[a.status], bLive = STATUS_LIVE[b.status];
+    var aDone = STATUS_DONE[a.status], bDone = STATUS_DONE[b.status];
+    var aPost = a.status==='POSTPONED'||a.status==='CANCELLED';
+    var bPost = b.status==='POSTPONED'||b.status==='CANCELLED';
+    var now = Date.now();
+    var aT = new Date(a.utcDate).getTime(), bT = new Date(b.utcDate).getTime();
+    /* live first */
+    if (aLive && !bLive) return -1;
+    if (!aLive && bLive) return 1;
+    /* finished: most recent first */
+    if (aDone && bDone) return bT - aT;
+    if (aDone && !bDone) return 1;
+    if (!aDone && bDone) return -1;
+    /* soon (< 30 min) before regular upcoming */
+    var aSoon = !aLive && !aDone && !aPost && (aT - now > 0 && aT - now < 1800000);
+    var bSoon = !bLive && !bDone && !bPost && (bT - now > 0 && bT - now < 1800000);
+    if (aSoon && !bSoon) return -1;
+    if (!aSoon && bSoon) return 1;
+    /* upcoming: soonest first */
+    if (!aPost && !bPost) return aT - bT;
+    /* postponed/cancelled last */
+    if (aPost && !bPost) return 1;
+    if (!aPost && bPost) return -1;
+    return aT - bT;
+  };
+
+  order.forEach(function(code, idx) {
+    var g = groups[code];
+    g.items.sort(matchSort);
+    var arName = COMP_AR[code] || g.comp.name;
+    var emblem = g.comp.emblem
+      ? '<img class="comp-emblem" src="'+g.comp.emblem+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">'
+      : '';
+    if (idx > 0) {
+      html += '<div class="section-sep"><div class="section-sep-icon">'+sepSvg+'</div></div>';
+    }
+    html += '<div class="comp-block"><div class="comp-header">'+emblem+'<span>'+arName+'</span></div>';
+    g.items.forEach(function(m){ html += renderMatchFull(m); });
+    html += '</div>';
+  });
+  list.innerHTML = html;
+
+  /* live badge in header */
+  var anyLive = filtered.some(function(m){ return STATUS_LIVE[m.status]; });
+  var lb = document.getElementById('liveBadge');
+  if (lb) lb.style.display = anyLive ? '' : 'none';
+}
+
+function setDay(ds) {
+  _activeDay = ds;
+  buildTabs(_allMatches);
+  renderActive();
+}
+
+function refresh() {
+  var btn = document.getElementById('refreshBtn');
+  if (btn) btn.classList.add('spinning');
+  fetch('/tracker-api/matches')
+    .then(function(r){ return r.json(); })
+    .then(function(d) {
+      _allMatches = d.matches || [];
+      buildTabs(_allMatches);
+      renderActive();
+      if (btn) btn.classList.remove('spinning');
+    })
+    .catch(function() {
+      var list = document.getElementById('matchesList');
+      if (list) list.innerHTML = '<div class="matches-empty">تعذر تحميل المباريات</div>';
+      if (btn) btn.classList.remove('spinning');
+    });
+}
+
+/* ═══ INIT ═══ */
+_activeDay = 'all';
+refresh();
+setInterval(refresh, 3 * 60 * 1000);
+
+/* ═══ LIVE TICKER: countdown + match minute ═══ */
+setInterval(function() {
+  var now = Date.now();
+  document.querySelectorAll('[data-cntdn]').forEach(function(el) {
+    var diff = new Date(el.dataset.cntdn).getTime() - now;
+    var txt = _fmtDiff(diff, el.dataset.cntdn);
+    if (!txt) { el.textContent = ''; return; }
+    el.textContent = txt;
+    el.className = 'm-countdown' + (diff < 300000 ? ' urgent' : diff < 3600000 ? ' soon' : '');
+  });
+  document.querySelectorAll('[data-mid]').forEach(function(el) {
+    var mid = parseInt(el.dataset.mid);
+    var m = null;
+    for (var i = 0; i < _allMatches.length; i++) {
+      if (_allMatches[i].id === mid) { m = _allMatches[i]; break; }
+    }
+    if (m) { var mn = getMatchMinute(m); if (mn) el.textContent = mn; }
+  });
+}, 1000);
+
+</script>
+</body>
+</html>
