@@ -464,15 +464,16 @@ function updateUI(d) {
 
     // Populate settings inputs once
     if (!settingsInitialized) {
-        var geo = d.geo_block || {};
-        var geoInput = document.getElementById('geo-block-countries-input');
-        if (geoInput) geoInput.value = (geo.blocked_countries || []).join(', ');
-
         var passInput = document.getElementById('stream-pass-input');
         if (passInput) passInput.value = d.stream_pass_value || '';
 
         settingsInitialized = true;
     }
+
+    // تحديث قائمة الدول المحظورة في كل مرة
+    var geo = d.geo_block || {};
+    var geoInput = document.getElementById('geo-block-countries-input');
+    if (geoInput) geoInput.value = (geo.blocked_countries || []).join(', ');
 
     // Geo-block toggle
     var geo = d.geo_block || {};

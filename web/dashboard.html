@@ -758,13 +758,27 @@
       newBlocked = _blockedList.concat([code]);
     }
 
-    var toggle = document.getElementById('geo-block-toggle');
-    var isEnabled = toggle ? toggle.classList.contains('active') : false;
-
-    var r = await apiPost('/geo-block/config', { enabled: isEnabled, blocked_countries: newBlocked });
+    /* تفعيل تلقائي للحظر عند إضافة دولة */
+    var r = await apiPost('/geo-block/config', { enabled: true, blocked_countries: newBlocked });
     if (r && r.ok) {
-      showToast(isBlocked ? 'تم إلغاء حظر ' + code : 'تم حظر ' + code + ' بنجاح وجعلها باللون الأحمر 🚫', 'success');
-      fetchData();
+      /* تحديث الخريطة فوراً */
+      _blockedList = newBlocked;
+      var vals = {};
+      newBlocked.forEach(function(cc) { vals[cc] = 'blocked'; });
+      Object.keys(_activeCounts).forEach(function(cc) {
+        if (newBlocked.indexOf(cc) === -1) vals[cc] = 'active';
+      });
+      _geoVals = vals;
+      if (_geoMap) {
+        try { _geoMap.series.regions[0].setValues(vals); } catch(e){}
+      }
+      /* تحديث حقل الإدخال */
+      var geoInput = document.getElementById('geo-block-countries-input');
+      if (geoInput) geoInput.value = newBlocked.join(', ');
+      /* تفعيل الزر */
+      var toggle = document.getElementById('geo-block-toggle');
+      if (toggle) toggle.classList.add('active');
+      showToast(isBlocked ? 'تم إلغاء حظر ' + code : 'تم حظر ' + code + ' بنجاح 🚫', 'success');
     } else {
       showToast('فشل تعديل حظر الدولة', 'error');
     }
