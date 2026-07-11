@@ -24,7 +24,6 @@
         <Signalling><Port>3333</Port><WorkerCount>4</WorkerCount></Signalling>
         <IceCandidates>
           <IceCandidate>85.190.101.80:10000-10100/udp</IceCandidate>
-          <IceCandidate>85.190.101.80:10000-10100/tcp</IceCandidate>
           <TcpForce>false</TcpForce>
           <TcpRelayWorkerCount>8</TcpRelayWorkerCount>
         </IceCandidates>

@@ -61,7 +61,7 @@ function startWhep() {
 
     if (msg.command === 'offer') {
       var sdp = msg.sdp;
-      whepPc = new RTCPeerConnection({ iceServers: _webrtcIceServers, iceTransportPolicy: 'all', bundlePolicy: 'max-bundle', rtcpMuxPolicy: 'require' });
+      whepPc = new RTCPeerConnection({ iceServers: [] });
 
       whepPc.ontrack = function(event) {
         if (event.streams && event.streams[0]) {
@@ -88,32 +88,10 @@ function startWhep() {
       whepPc.oniceconnectionstatechange = function() {
         if (!whepPc) return;
         var st = whepPc.iceConnectionState;
-        if (st === 'failed') {
+        if (st === 'failed' || st === 'disconnected') {
           _stopStallWatchdog();
-          if (_iceRestartCount < MAX_ICE_RESTARTS) {
-            _iceRestartCount++;
-            _destroyWhep();
-            setTimeout(function() { startWhep(); }, 1000);
-          } else {
-            _destroyWhep();
-            scheduleRetry();
-          }
-        } else if (st === 'disconnected') {
-          if (_iceRestartCount < MAX_ICE_RESTARTS) {
-            _iceRestartCount++;
-            setTimeout(function() {
-              if (whepPc && whepPc.iceConnectionState === 'disconnected') {
-                _destroyWhep();
-                startWhep();
-              }
-            }, 3000);
-          } else {
-            _stopStallWatchdog();
-            _destroyWhep();
-            scheduleRetry();
-          }
-        } else if (st === 'connected' || st === 'completed') {
-          _iceRestartCount = 0;
+          _destroyWhep();
+          scheduleRetry();
         }
       };
 
