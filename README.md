@@ -49,8 +49,8 @@
 (OvenMediaEngine + خادم التتبّع + nginx + شهادة TLS + الجدار الناري):
 
 ```bash
-git clone https://github.com/abooodHub/HK-Stream-ome.git
-cd HK-Stream-ome
+git clone https://github.com/abooodHub/HK-Stream.git
+cd HK-Stream
 sudo DOMAIN=example.com EMAIL=you@mail.com FOOTBALL_API_KEY=xxxx bash install.sh
 ```
 
