@@ -183,6 +183,14 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(403, {"error": "banned"}, public=True)
             if ip in store.kicks:
                 return self._json(403, {"error": "kicked"}, public=True)
+            # فحص حظر الدول الجغرافي
+            gb = store.geo_block_cfg
+            if gb.get("enabled") and gb.get("blocked_countries"):
+                cc = geoip.resolve_ip_country_cached(ip)
+                if cc == "UN":
+                    cc = geoip.resolve_ip_country(ip)
+                if cc and cc != "local" and cc in gb["blocked_countries"]:
+                    return self._json(403, {"error": "geo_blocked", "country": cc}, public=True)
             if not auth.heartbeat_ok(ip):
                 return self._json(429, {"error": "rate"}, public=True)
             ua   = self.headers.get("User-Agent", "")

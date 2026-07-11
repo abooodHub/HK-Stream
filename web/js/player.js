@@ -673,6 +673,7 @@ function sendHeartbeat() {
       return r.json().then(function(d) {
         if (d.error === 'banned') { window.location.href = '/kicked.html'; }
         else if (d.error === 'kicked') { window.location.href = '/kicked.html'; }
+        else if (d.error === 'geo_blocked') { window.location.href = '/kicked.html?reason=geo'; }
       });
     }
   })

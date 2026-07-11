@@ -55,14 +55,29 @@
 </div>
 <script>
 (function(){
-  var secs = 3600, el = document.getElementById('countdown');
-  function tick() {
-    if (secs <= 0) { el.textContent = '00:00'; return; }
-    secs--;
-    el.textContent = String(Math.floor(secs/60)).padStart(2,'0') + ':' + String(secs%60).padStart(2,'0');
-    setTimeout(tick, 1000);
+  var params = new URLSearchParams(window.location.search);
+  var isGeo = params.get('reason') === 'geo';
+  var el = document.getElementById('countdown');
+  var title = document.querySelector('.lock-title');
+  var msg = document.querySelector('.lock-msg');
+  var icon = document.querySelector('.lock-icon');
+  var box = document.querySelector('.countdown-box');
+
+  if (isGeo) {
+    icon.textContent = '🌍';
+    title.textContent = 'البث غير متاح في منطقتك';
+    msg.innerHTML = 'هذا البث محظور في بلدك من قِبل المسؤول.<br>لا يمكنك مشاهدة البث المباشر في الوقت الحالي.';
+    if (box) box.style.display = 'none';
+  } else {
+    var secs = 3600;
+    function tick() {
+      if (secs <= 0) { el.textContent = '00:00'; return; }
+      secs--;
+      el.textContent = String(Math.floor(secs/60)).padStart(2,'0') + ':' + String(secs%60).padStart(2,'0');
+      setTimeout(tick, 1000);
+    }
+    tick();
   }
-  tick();
 })();
 </script>
 </body>
