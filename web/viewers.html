@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#07070f"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <title>H&amp;K Stream - المتصلون والأمان</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/common.css?v=302">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css"/>
+</head>
+<body>
+
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- Login Screen -->
+  <div id="login-screen">
+    <div class="login-box">
+      <div style="display:flex; justify-content:center; margin-bottom:12px;">
+        <span class="hdr-logo-icon-lg">H &amp; K</span>
+      </div>
+      <div class="login-sub">لوحة التحكم - سيرفر البث المباشر</div>
+      <input class="login-field" id="login-user" placeholder="اسم المستخدم" autocomplete="username">
+      <input class="login-field" id="login-pass" type="password" placeholder="كلمة المرور" autocomplete="current-password">
+      <button class="login-btn" id="login-btn" onclick="doLogin()">دخول</button>
+      <div class="login-error" id="login-error"></div>
+    </div>
+  </div>
+
+  <div id="app">
+    <header class="top-nav">
+      <div class="nav-brand-area">
+        <span class="hdr-logo-icon">H &amp; K</span>
+        <div class="nav-status-badge offline" id="nav-status-badge">
+          <span class="pulse-dot"></span>
+          <span id="nav-status-text">غير متصل</span>
+        </div>
+      </div>
+      <div class="nav-menu-container">
+        <ul class="nav-menu">
+          <li><a href="/dashboard.html" class="nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            الرئيسية
+          </a></li>
+          <li><a href="/viewers.html" class="nav-item active">
+            <svg width="16" height="16" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            المتصلون والأمان
+          </a></li>
+          <li><a href="/settings.html" class="nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            الإعدادات
+          </a></li>
+        </ul>
+      </div>
+      <div class="nav-meta-area">
+        <div class="nav-time" id="header-time">00:00:00</div>
+        <button class="nav-logout-btn" onclick="doLogout()">تسجيل الخروج</button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="dashboard-container">
+
+        <!-- Geographic Map -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">🗺️ خريطة المشاهدين الجغرافية</div>
+            <span class="badge badge-gray" id="geo-map-count">0 دولة</span>
+          </div>
+          <div class="card-body">
+            <div id="geo-map" style="width:100%;height:360px;background:#0d0d1a;border-radius:var(--radius)"></div>
+            <div id="geo-map-empty" class="empty-state" style="display:none">لا يوجد مشاهدون لعرضهم على الخريطة</div>
+          </div>
+        </div>
+
+        <!-- Active Viewers -->
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-head">
+            <div class="card-title" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+              <span>قائمة المتصلين بالبث حالياً</span>
+              <div style="display:inline-flex; gap:8px; margin-right:12px; align-items:center;">
+                <span style="background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.25); color:#10b981; padding:4px 12px; border-radius:6px; font-weight:600; font-size:0.85rem; display:inline-flex; align-items:center; gap:6px; box-shadow: 0 0 10px rgba(16,185,129,0.05);">
+                  <span style="font-size:10px; color:#10b981;">🟢</span> المتصلون: <strong id="v-count" style="font-size:1.05rem; color:#10b981; font-weight:700; font-family:'Outfit', sans-serif;">0</strong>
+                </span>
+                <span style="background:rgba(6,182,212,0.12); border:1px solid rgba(6,182,212,0.25); color:#06b6d4; padding:4px 12px; border-radius:6px; font-weight:600; font-size:0.85rem; display:inline-flex; align-items:center; gap:6px; box-shadow: 0 0 10px rgba(6,182,212,0.05);">
+                  <span style="font-size:11px; color:#06b6d4;">🔥</span> الذروة: <strong id="v-peak" style="font-size:1.05rem; color:#06b6d4; font-weight:700; font-family:'Outfit', sans-serif;">0</strong>
+                </span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span class="badge badge-green" id="viewer-count-badge" style="display:none">0</span>
+              <button class="nav-ip-btn" id="ip-toggle-btn" onclick="toggleIPVisibility()" title="إظهار / إخفاء عناوين IP">
+                <svg id="ip-icon-hidden" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>
+                <svg id="ip-icon-visible" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>العنوان (IP Address)</th>
+                    <th>الجهاز</th>
+                    <th>المتصفح</th>
+                    <th>الجودة المحددة</th>
+                    <th>مدة البقاء</th>
+                    <th>إجراءات إدارية</th>
+                  </tr>
+                </thead>
+                <tbody id="viewers-tbody">
+                  <tr><td colspan="6" class="empty-state">لا يوجد مشاهدون متصلون حالياً</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Panels -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap: 16px; margin-bottom: 16px;">
+          <div class="card" style="margin:0">
+            <div class="card-head">
+              <div class="card-title">🚫 إدارة وعناوين IP المحظورة</div>
+              <button class="btn btn-danger btn-sm" onclick="clearAllBans()">إلغاء حظر الكل</button>
+            </div>
+            <div class="card-body">
+              <div class="ban-form" style="display:flex;gap:8px;margin-bottom:12px">
+                <input id="ban-ip-input" placeholder="عنوان IP، مثال: 1.2.3.4" style="flex:1;padding:6px 10px;border-radius:4px;border:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.2);color:#fff">
+                <input id="ban-reason-input" placeholder="السبب (اختياري)" style="flex:1;padding:6px 10px;border-radius:4px;border:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.2);color:#fff">
+                <button class="btn ban-btn" onclick="banIP()" style="padding:6px 14px">حظر</button>
+              </div>
+              <div class="table-wrap" style="max-height: 220px; overflow-y: auto;">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>عنوان IP</th>
+                      <th>سبب الحظر</th>
+                      <th>إجراء</th>
+                    </tr>
+                  </thead>
+                  <tbody id="banned-tbody">
+                    <tr><td colspan="3" class="empty-state">لا توجد عناوين محظورة</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin:0">
+            <div class="card-head"><div class="card-title">🌍 حظر الدول الجغرافي (Geo-Blocking)</div></div>
+            <div class="card-body">
+              <div class="setting-row" style="margin-bottom:16px">
+                <div>
+                  <div class="setting-label">تفعيل حظر الدول</div>
+                  <div class="setting-desc">حظر المشاهدين القادمين من دول معينة تلقائياً.</div>
+                </div>
+                <button class="toggle" id="geo-block-toggle" onclick="toggleGeoBlock()"></button>
+              </div>
+              <div class="setting-row">
+                <div>
+                  <div class="setting-label">رموز الدول المحظورة</div>
+                  <div class="setting-desc">اضغط على الدولة بالخريطة مباشرة لحظرها أو اكتب الرموز هنا:</div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+                  <input id="geo-block-countries-input" type="text" placeholder="US, CN, RU" style="flex:1;padding:6px 10px;border-radius:4px;border:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.2);color:#fff">
+                  <button class="btn btn-primary" onclick="saveGeoBlock()">تحديث</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <nav class="mobile-bottom-nav" id="mobileNav">
+      <a href="/dashboard.html" class="mobile-nav-item" data-tab="home">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        الرئيسية
+      </a>
+      <a href="/viewers.html" class="mobile-nav-item active" data-tab="viewers">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        المتصلون والأمان
+      </a>
+      <a href="/settings.html" class="mobile-nav-item" data-tab="settings">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+        الإعدادات
+      </a>
+    </nav>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js"></script>
+  <script src="/js/dashboard-common.js?v=1"></script>
+  <script src="/js/viewers.js?v=1"></script>
+</body>
+</html>
