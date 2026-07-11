@@ -1,194 +1,248 @@
 <div align="center">
 
-# 🎥 HK-Stream-ome
+# HK-Stream
 
-**منصّة بثّ مباشر عربية متكاملة — منخفضة التأخير، آمنة، وسهلة النشر**
+**منصّة بثّ مباشر عربية — منخفضة التأخير وآمنة**
 
-بثّ من OBS ويشاهد جمهورك فوراً عبر المتصفّح بلا تطبيقات — مبنية على
-**[OvenMediaEngine](https://www.ovenmediaengine.com/)** (WebRTC / LL-HLS) خلف **nginx**،
-مع خادم تتبّع وإدارة بـ **Python** ولوحة تحكّم وواجهة مشاهدة عربية كاملة.
+بث OBS مباشرة للمشاهدين في المتصفّح بلا تطبيقات
 
-![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)
-![nginx](https://img.shields.io/badge/nginx-reverse%20proxy-009639?logo=nginx&logoColor=white)
-![OvenMediaEngine](https://img.shields.io/badge/OvenMediaEngine-WebRTC%2FLLHLS-FF6B00)
-![License](https://img.shields.io/badge/license-MIT-green)
+`OvenMediaEngine` · `nginx` · `Python`
+
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://python.org)
+[![nginx](https://img.shields.io/badge/nginx-1.28-009639?logo=nginx&logoColor=white)](https://nginx.org)
+[![OvenMediaEngine](https://img.shields.io/badge/OvenMediaEngine-WebRTC%2FLLHLS-FF6B00)](https://ovenmediaengine.com)
+[![License](https://img.shields.io/badge/license-MIT-green)](#)
 
 </div>
 
 ---
 
-## 📸 لقطات من الواجهة الجديدة
+## screenshots
 
 <div align="center">
 
-| 📺 الرئيسية ولوحة التحكم | 👥 قائمة المتصلين والإحصاءات |
+| الرئيسية | لوحة التحكّم | المشاهدون |
+|:---:|:---:|:---:|
+| ![home](img/home.jpg) | ![dashboard](img/viewers.jpg) | ![viewers](img/index.png) |
+
+| البث الفردي | البث متعدد الجودات |
 |:---:|:---:|
-| ![الرئيسية](img/home.jpg) | ![المشاهدون](img/viewers.jpg) |
-| **🎬 مشغل البث الفردي (Index)** | **🎛️ مشغل البث متعدد الجودات (Multi)** |
-| ![مشغل البث الفردي](img/index.png) | ![البث متعدد الجودات](img/multi.png) |
+| ![index](img/multi.png) | ![multi](img/multi.png) |
 
 </div>
 
 ---
 
-## ✨ المميزات
+## features
 
-- **بثّ منخفض التأخير** — WebRTC (أقل من ثانية) مع تراجع تلقائي إلى LL-HLS.
-- **تمرير بلا ترميز (Bypass)** — يمرّر جودة المصدر كما هي → استهلاك معالج شبه معدوم.
-- **لوحة تحكّم عربية** — حالة البث، المشاهدون الأحياء، الإحصاءات، صحة الخادم، وإجماليات التشغيل.
-- **حماية متعددة الطبقات** — كلمة مرور للمشاهدة، حظر/طرد IP (iptables)، وحظر جغرافي للدول.
-- **مواعيد المباريات** — تكامل مع [football-data.org](https://www.football-data.org/) لعرض جدول المباريات.
-- **خصوصية مدمجة** — مسح تلقائي لعناوين IP للمشاهدين وسجلّات nginx عند توقّف البث.
+- **تأخير أقل من ثانية** — WebRTC مع LL-HLS كخيار احتياطي
+- **بلا ترميز (Bypass)** — يمرّر جودة المصدر كما هي بمعالج شبه معدوم
+- **لوحة تحكّم عربية** — حالة البث، المشاهدون الأحياء، الإحصاءات، صحة الخادم
+- **حماية متعددة** — كلمة مرور، حظر IP، حظر جغرافي، rate limiting
+- **مواعيد مباريات** — تكامل مع football-data.org
+- **خصوصية** — مسح تلقائي لعناوين IP وسجلّات nginx عند توقّف البث
+- **إشعارات البث** — إشعار متصفّح عند بدء/إيقاف البث
+- **PWA** — تثبيت كتطبيق على الجهاز مع تعمل أوفلاين
 
 ---
 
-## ⚡ التثبيت بأمر واحد (خادم جديد)
+## architecture
 
-على خادم **Ubuntu** جديد بنطاق مُوجَّه إليه — أمر واحد يثبّت ويشغّل كل شيء
-(OvenMediaEngine + خادم التتبّع + nginx + شهادة TLS + الجدار الناري):
+```
+OBS ──RTMP:1935──▶  OvenMediaEngine  ──webhook──▶  Python Tracker
+                       (Docker)         (التحقق)    (المشاهدون/الأمان)
+                          │                            ▲
+                   WebRTC / LL-HLS                     │ /tracker-api
+                          ▼                            │
+المتصفّح ◀──HTTPS:443── nginx (reverse proxy) ───────┘
+```
+
+1. **البث** — OBS يدفع عبر RTMP إلى OvenMediaEngine
+2. **القبول** — يستدعي OME webhook للتحقق من مفتاح البث من Tracker
+3. **التوزيع** — يحوّل OME إلى WebRTC + LL-HLS ويعكسهما nginx
+4. **المشاهدة** — WebRTC أولاً ثم LL-HLS تلقائياً
+5. **التتبّع** — يسجّل المشاهدين والجلسات ويطبّق الحماية
+
+---
+
+## installation
+
+### المتطلبات
+
+- Ubuntu 22.04+ على VPS
+- نطاق مُوجَّه (domain)
+- Docker
+
+### خطوات التثبيت
+
+**1. تثبيت OvenMediaEngine**
 
 ```bash
+docker run -d --name ovenmediaengine --restart always --network host \
+  -v /opt/ovenmediaengine/origin_conf:/opt/ovenmediaengine/bin/origin_conf \
+  airensoft/ovenmediaengine:latest -c origin_conf
+```
+
+**2. تثبيت خادم التتبّع**
+
+```bash
+sudo apt install python3 python3-pip nginx certbot python3-certbot-nginx ufw
+
+# نشر الكود
 git clone https://github.com/abooodHub/HK-Stream.git
 cd HK-Stream
-sudo DOMAIN=example.com EMAIL=you@mail.com FOOTBALL_API_KEY=xxxx bash install.sh
+
+# تثبيت الاعتماديات
+pip3 install -r requirements.txt
+
+# نشر على المسار الصحيح
+sudo cp -r tracker/ome_tracker /opt/ome-tracker/ome_tracker
+sudo cp tracker/tracker_rtmp.py /opt/ome-tracker/
+
+# إنشاء ملف .env
+sudo tee /opt/ome-tracker/.env <<EOF
+FOOTBALL_API_KEY=your_key_here
+OME_API_TOKEN=your_token_here
+ALLOWED_ORIGIN=https://your-domain.com
+EOF
+sudo chmod 600 /opt/ome-tracker/.env
+
+# تشغيل كخدمة
+sudo cp deploy/ome-tracker.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now ome-tracker
 ```
 
-| المتغيّر | إلزامي؟ | الوصف |
-|---|:---:|---|
-| `DOMAIN` | ✅ | النطاق المُوجَّه للخادم |
-| `EMAIL` | ✅ | بريد لإصدار شهادة Let's Encrypt |
-| `FOOTBALL_API_KEY` | ❌ | مفتاح المباريات (يُترك فارغاً لتعطيلها) |
-| `OME_API_TOKEN` | ❌ | يُولَّد عشوائياً إن تُرك فارغاً |
-| `PUBLIC_IP` | ❌ | يُكتشف تلقائياً |
-
-يطبع السكربت في النهاية رابط الموقع، توكن OME، وكيفية استخراج كلمة مرور لوحة التحكّم.
-
----
-
-## 🐳 التشغيل عبر Docker (محلي/تطوير)
-
-يشغّل خدمتين: حاوية `tracker` (Python) وحاوية `web` (nginx تخدم `web/` وتعكس `/tracker-api/`):
+**3. إعداد nginx + TLS**
 
 ```bash
-cp .env.example .env        # (اختياري) املأ FOOTBALL_API_KEY و OME_API_TOKEN
-docker compose up --build -d
-
-# الواجهة:       http://localhost:8080
-# لوحة التحكّم:   http://localhost:8080/dashboard.html
-docker compose logs -f tracker     # كلمة مرور admin تُطبع هنا أول مرة
-docker compose down                # إيقاف (البيانات تبقى في volume: tracker-data)
+sudo certbot certonly --standalone -d your-domain.com
+sudo cp config/your-domain.com.conf /etc/nginx/sites-available/
+sudo ln -s /etc/nginx/sites-available/your-domain.com.conf /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
 ```
 
-> **حدود التشغيل بالحاوية:** ميزات مستوى-المضيف (حظر **iptables**، قراءة **سجلّ nginx**)
-> تتدهور بأمان دون صلاحيات إضافية. و**OvenMediaEngine** + **TLS** يُداران خارج هذا الـ compose
-> (للنشر الكامل استخدم `install.sh`).
+**4. الجدار الناري**
+
+```bash
+sudo ufw allow 22/tcp
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw allow 1935/tcp
+sudo ufw allow 3333/tcp
+sudo ufw allow 3334/tcp
+sudo ufw allow 3478/udp
+sudo ufw allow 10000:10100/udp
+sudo ufw allow 9999
+sudo ufw --force enable
+```
+
+**5. ضبط Server.xml**
+
+عدّل `/opt/ovenmediaengine/origin_conf/Server.xml` وبدّل:
+- `<AccessToken>` — توكن OME API
+- `<PublicIP>` — IP العام للخادم
+- `<DomainName>` — نطاقك
+
+**6. تشغيل البث من OBS**
+
+```
+Server: rtmp://your-domain.com:1935/app
+Stream Key: stream
+```
 
 ---
 
-## 🔄 كيف يعمل
+## dashboard
 
-```
-   OBS ──RTMP:1935──▶  OvenMediaEngine  ──webhook──▶  Python Tracker :9999
-                         (Docker)         (قبول البثّ)    (مشاهدون/أمان/إحصاءات)
-                            │                                  ▲
-                     WebRTC / LL-HLS                           │ /tracker-api
-                            ▼                                  │
-   المتصفّح ◀──HTTPS:443──  nginx (reverse proxy + TLS) ───────┘
-                          يخدم /web ويوجّه /ome-hls /ome-ws /tracker-api
+اللوحة متاحة على `https://your-domain.com/dashboard.html`
+
+**كلمة المرور:** تُطبع في سجلّ الخدمة أول مرة:
+```bash
+journalctl -u ome-tracker -n 30 --no-pager | grep -i pass
 ```
 
-1. **البثّ**: يدفع OBS عبر RTMP إلى OvenMediaEngine (المنفذ 1935).
-2. **القبول**: قبل السماح بالبثّ، يستدعي OME خطّاف القبول (`/api/ome/webhook`) في خادم التتبّع للتحقق من مفتاح البثّ.
-3. **التوزيع**: يحوّل OME البثّ إلى WebRTC و LL-HLS، ويعكسهما nginx للمشاهدين عبر HTTPS.
-4. **المشاهدة**: تجرّب الواجهة WebRTC أولاً (تأخير أدنى)، ثم LL-HLS عند الحاجة.
-5. **التتبّع**: يسجّل خادم Python المشاهدين والجلسات والإحصاءات، ويطبّق الحظر/الطرد والحماية.
+### الأقسام
 
----
-
-## 🎛️ لوحة التحكّم
-
-متاحة على `/dashboard.html` وتتطلّب تسجيل دخول (كلمة مرور admin تُطبع في سجلّ الخدمة أول مرة):
-
-- **الرئيسية** — حالة البث، المشاهدون والذروة، معدّل البيانات، مدّة البث، استقرار البث.
-- **صحة الخادم** — المعالج/الذاكرة/القرص بأشرطة ملوّنة تحذيرية.
-- **إجماليات الخادم** — فترة تشغيل الخادم، ساعات البث الكلّية، وحجم البيانات الكلّي (تراكمي).
-- **المشاهدون** — قائمة حيّة (جهاز/متصفّح/جودة/دولة) مع إخفاء IP، وتفصيل الأجهزة والدول.
-- **الأمان** — كلمة مرور المشاهدة، حظر IP يدوي، القائمة المحظورة، والحظر الجغرافي.
-- **الإعدادات** — تغيير كلمة مرور اللوحة، وتصفير عدادات/بيانات البث.
-
----
-
-## 📂 محتوى المستودع
-
-| المسار | الوصف |
+| القسم | المحتوى |
 |---|---|
-| `install.sh` | تثبيت كامل بأمر واحد على خادم Ubuntu جديد |
-| `tracker/tracker_rtmp.py` | نقطة دخول خادم التتبّع (المنفذ `9999`) |
-| `tracker/ome_tracker/` | حزمة الخادم: `config`/`store`/`auth`/`geoip`/`detect`/`matches`/`metrics`/`ome`/`handler` |
-| `web/` | الواجهة: المشاهدة، لوحة التحكّم، المباريات، المساعدة |
-| `config/your-domain.com.conf` | قالب إعداد nginx (reverse proxy + TLS + حماية HLS) |
-| `config/ome/Server.xml` | قالب إعداد OvenMediaEngine (يملؤه `install.sh`) |
-| `deploy/ome-tracker.service` | وحدة systemd لتشغيل التتبّع |
-| `Dockerfile` · `docker-compose.yml` | تشغيل حاوي للـ tracker + web |
-| `.env.example` | قالب متغيّرات البيئة (انسخه إلى `.env`) |
+| **الرئيسية** | حالة البث، المشاهدون، الذروة، مدّة البث، استقرار البث |
+| **صحة الخادم** | المعالج / الذاكرة / القرص بأشرطة ملوّنة |
+| **إجماليات الخادم** | فترة التشغيل، ساعات البث الكلّية، حجم البيانات |
+| **المشاهدون** | قائمة حيّة (جهاز/متصفح/جودة/دولة) مع إخفاء IP |
+| **الأمان** | كلمة مرور المشاهدة، حظر IP، القائمة المحظورة، الحظر الجغرافي |
+| **الإعدادات** | تغيير كلمة المرور، تصفير العدادات |
 
 ---
 
-## ⚙️ متغيّرات البيئة
+## project structure
+
+```
+HK-Stream/
+├── web/                    # الواجهة
+│   ├── index.html          # صفحة البث الرئيسية
+│   ├── dashboard.html      # لوحة التحكّم
+│   ├── matches.html        # جدول المباريات
+│   ├── stats.html          # إحصائيات حيّة
+│   ├── js/                 # OvenPlayer + dashboard + player
+│   ├── css/                # الأنماط + الخطوط
+│   ├── icons/              # أيقونات PWA
+│   └── sw.js               # Service Worker
+├── tracker/                # خادم التتبّع
+│   ├── tracker_rtmp.py     # نقطة الدخول
+│   └── ome_tracker/        # الحزمة: auth, handler, ome, store, geoip, matches...
+├── config/                 # إعدادات OME و nginx
+├── deploy/                 # systemd + nginx
+├── fonts/                  # Tajawal + Outfit
+└── .env.example            # قالب متغيّرات البيئة
+```
+
+---
+
+## environment variables
 
 | المتغيّر | الوصف |
 |---|---|
-| `FOOTBALL_API_KEY` | مفتاح [football-data.org](https://www.football-data.org/) لعرض المباريات |
-| `OME_API_TOKEN` | توكن OME API — يطابق `<AccessToken>` في `Server.xml` |
-| `ALLOWED_ORIGIN` | النطاق المسموح به في CORS (مثل `https://your-domain.com`) |
-| `TRACKER_HOST` | مضيف ربط خادم التتبّع (افتراضي `127.0.0.1`؛ في Docker `0.0.0.0`) |
-| `TRACKER_PORT` | منفذ خادم التتبّع (افتراضي `9999`) |
+| `FOOTBALL_API_KEY` | مفتاح football-data.org للمباريات |
+| `OME_API_TOKEN` | توكن OME API — يطابق `<AccessToken>` في Server.xml |
+| `ALLOWED_ORIGIN` | النطاق المسموح به في CORS |
+| `TRACKER_HOST` | مضيف ربط التتبّع (افتراضي: `127.0.0.1`) |
+| `TRACKER_PORT` | منفذ التتبّع (افتراضي: `9999`) |
 
 ---
 
-## 🛠️ النشر اليدوي
+## security
 
-للتحكّم خطوة بخطوة بدل `install.sh` — راجع الدليل التفصيلي في
-[`docs`](#) أو اتبع منطق `install.sh`. باختصار: ثبّت الحزم → شغّل OME (Docker) →
-انشر خادم التتبّع (systemd) → انشر الواجهة + nginx → أصدر شهادة TLS (certbot) → اضبط الجدار الناري.
-
-> ⚠️ **مهم:** مدى UDP في الجدار الناري لازم يطابق مدى ICE في OME (`10000-10099`)،
-> وإلا يعمل WebRTC على الجوال ويفشل على سطح المكتب.
-
----
-
-## 🔐 الأمان
-
-ميزات الحماية المدمجة في المنصّة:
-
-- **لا أسرار في الكود** — كل المفاتيح تُقرأ من متغيّرات البيئة (`EnvironmentFile` بصلاحية `600`).
-- **منافذ داخلية محجوبة** — `8080` (HLS) و`8081` (OME API) لا يُوصَل إليهما إلا عبر nginx.
-- **مصادقة وحماية** — تجزئة كلمات المرور (bcrypt/sha256)، توكنات للوصول، حدّ لمحاولات الدخول، وحظر/طرد IP عبر iptables.
-- **خصوصية المشاهدين** — مسح تلقائي لعناوين IP وسجلّات nginx عند توقّف البث.
-- **بيانات حسّاسة مستثناة** — ملفات `data/` (هاشات/IP/جلسات) و`.env` خارج Git عبر `.gitignore`.
-
-> 💡 للنشر الإنتاجي يُنصح إضافةً بتفعيل **fail2ban** واستخدام **مفاتيح SSH** بدل كلمات المرور.
+- لا أسرار في الكود — كل المفاتيح من EnvironmentFile بصلاحية 600
+- منافذ داخلية محجوبة — 8081 (OME API) لا يُوصَل إليها إلا من localhost
+- مصادقة — bcrypt/sha256 لكلمات المرور، rate limiting، حدّ محاولات الدخول
+- حماية IP — حظر/طرد عبر iptables + UFW
+- خصوصية — مسح تلقائي لعناوين IP وسجلّات nginx عند توقّف البث
+- بيانات حسّاسة مستثناة — `data/` و `.env` خارج Git
 
 ---
 
-## 🙏 شكر وتقدير
+## tech stack
 
-هذا المشروع يقوم على أدوات مفتوحة المصدر رائعة — كل الشكر لفِرقها:
+| التقنية | الاستخدام |
+|---|---|
+| [OvenMediaEngine](https://ovenmediaengine.com) | محرك البث — WebRTC + LL-HLS |
+| [OvenPlayer](https://ovenplayer.com) | مشغّل الويب |
+| [nginx](https://nginx.org) | reverse proxy + TLS |
+| [Python](https://python.org) | خادم التتبّع + لوحة التحكّم |
+| [football-data.org](https://football-data.org) | بيانات المباريات |
+| [Let's Encrypt](https://letsencrypt.org) | شهادات TLS المجانية |
 
-- **[OvenMediaEngine](https://github.com/AirenSoft/OvenMediaEngine)** — محرّك البثّ منخفض التأخير (WebRTC / LL-HLS)، قلب المنصّة النابض. 🙌
-- **[OvenPlayer](https://github.com/AirenSoft/OvenPlayer)** — مشغّل الويب لعرض البثّ في المتصفّح.
-- **[nginx](https://nginx.org/)** — الوكيل العكسي وإنهاء TLS.
-- **[football-data.org](https://www.football-data.org/)** — بيانات مواعيد المباريات.
-- **[Let's Encrypt](https://letsencrypt.org/)** — شهادات TLS المجانية.
-- **[Docker](https://www.docker.com/)** — حاويات التشغيل.
+---
+
+## license
+
+MIT
 
 ---
 
 <div align="center">
 
-**التقنيات:** [OvenMediaEngine](https://www.ovenmediaengine.com/) · [nginx](https://nginx.org/) · Python 3 · Docker · HTML/CSS/JS عربي (RTL)
-
-صُنع بـ ❤️ للبثّ العربي
+صُنع للبثّ العربي
 
 </div>
