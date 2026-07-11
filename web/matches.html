@@ -472,7 +472,7 @@ function renderActive() {
   var liveMatches = filtered.filter(function(m){ return STATUS_LIVE[m.status]; });
   var html = liveMatches.length ? renderLiveHeroCard(liveMatches[0]) : '';
 
-  /* ── Sort priority: live → soon → upcoming (soonest first) → finished (latest first) → postponed/cancelled ── */
+  /* ── Sort priority: finished (latest first) → live → soon → upcoming (soonest first) → postponed/cancelled ── */
   var matchSort = function(a, b) {
     var aLive = STATUS_LIVE[a.status], bLive = STATUS_LIVE[b.status];
     var aDone = STATUS_DONE[a.status], bDone = STATUS_DONE[b.status];
@@ -480,13 +480,13 @@ function renderActive() {
     var bPost = b.status==='POSTPONED'||b.status==='CANCELLED';
     var now = Date.now();
     var aT = new Date(a.utcDate).getTime(), bT = new Date(b.utcDate).getTime();
-    /* live first */
+    /* finished first: latest first */
+    if (aDone && !bDone) return -1;
+    if (!aDone && bDone) return 1;
+    if (aDone && bDone) return bT - aT;
+    /* live second */
     if (aLive && !bLive) return -1;
     if (!aLive && bLive) return 1;
-    /* finished: most recent first */
-    if (aDone && bDone) return bT - aT;
-    if (aDone && !bDone) return 1;
-    if (!aDone && bDone) return -1;
     /* soon (< 30 min) before regular upcoming */
     var aSoon = !aLive && !aDone && !aPost && (aT - now > 0 && aT - now < 1800000);
     var bSoon = !bLive && !bDone && !bPost && (bT - now > 0 && bT - now < 1800000);
