@@ -268,7 +268,7 @@
               <span class="badge badge-gray" id="geo-map-count">0 دولة</span>
             </div>
             <div class="card-body">
-              <div id="geo-map" style="width:100%;height:360px"></div>
+              <div id="geo-map" style="width:100%;height:360px;background:#0d0d1a;border-radius:var(--radius)"></div>
               <div id="geo-map-empty" class="empty-state" style="display:none">لا يوجد مشاهدون لعرضهم على الخريطة</div>
             </div>
           </div>
@@ -669,7 +669,7 @@
     try {
       _geoMap = new jsVectorMap({
         selector: '#geo-map', map: 'world',
-        zoomButtons: true, zoomOnScroll: false, backgroundColor: 'transparent',
+        zoomButtons: true, zoomOnScroll: false, backgroundColor: '#0d0d1a',
         regionStyle: {
           initial: { fill: '#141424', stroke: 'rgba(255, 255, 255, 0.05)', 'stroke-width': 0.5 },
           hover: { fill: 'rgba(201, 162, 39, 0.4)' },
