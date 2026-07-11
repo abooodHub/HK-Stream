@@ -84,7 +84,7 @@
   body.player-compact .player-wrap{max-width:900px}
   body:not(.player-compact) .player-wrap{max-width:100%;padding:0}
   body:not(.player-compact) #playerContainer{border-radius:0;height:auto!important}
-  body:not(.player-compact) .player-ratio{padding-top:0;height:calc(100vh - var(--header-h))!important}
+  body:not(.player-compact) .player-ratio{padding-top:0;height:calc(100vh - 56px)!important}
   body:not(.player-compact){overflow:hidden!important}
   .thater-btn{position:relative}
   .thater-btn .thater-tooltip{position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1a1a2e;color:var(--text);font-size:.72rem;font-weight:700;padding:5px 10px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;z-index:20;border:1px solid rgba(255,255,255,.1)}
@@ -228,8 +228,8 @@
     container.innerHTML = '';
 
     var wsProto = (location.protocol === 'https:') ? 'wss:' : 'ws:';
-    var wsUrl = wsProto + '//' + location.host + '/ws/live/stream';
-    var llhlsUrl = location.protocol + '//' + location.host + '/llhls/live/stream/llhls.m3u8';
+    var wsUrl = wsProto + '//' + location.host + '/ws/default/app/stream';
+    var llhlsUrl = location.protocol + '//' + location.host + '/llhls/default/app/stream/llhls.m3u8';
 
     ovenPlayer = OvenPlayer.create(container, {
       sources: [
@@ -256,15 +256,11 @@
     });
 
     ovenPlayer.on('stateChanged', function(e) {
-      var pill = document.getElementById('live-pill');
-      var text = document.getElementById('live-text');
-      if (!pill || !text) return;
+      var dot = document.getElementById('hdrLiveDot');
       if (e.state === 'playing') {
-        pill.classList.remove('off');
-        text.textContent = 'مباشر';
+        if (dot) dot.classList.add('on');
       } else if (e.state === 'idle' || e.state === 'error') {
-        pill.classList.add('off');
-        text.textContent = 'غير متصل';
+        if (dot) dot.classList.remove('on');
       }
     });
 
