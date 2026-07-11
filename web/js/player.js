@@ -1,11 +1,13 @@
 var host = window.location.host;
 var proto = window.location.protocol;
 var RETRY_MS = 2000;
-var STALL_MS  = 8000;
+var STALL_MS  = 15000;
+var MAX_ICE_RESTARTS = 3;
 
 var retryTimer;
 var _stallWatchdog  = null;
 var _lastTimeUpdate = 0;
+var _iceRestartCount = 0;
 var isMuted = false;
 var _autoplayBlocked = false;
 var _tapCheckTimer = null;
@@ -15,6 +17,16 @@ var _videoEventsBound = false;
 var whepPc = null;
 var whepWs = null;
 var whepStream = null;
+var _webrtcIceServers = [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun1.l.google.com:19302' },
+  { urls: 'stun:stun2.l.google.com:19302' },
+  { urls: 'stun:stun3.l.google.com:19302' },
+  { urls: 'stun:stun4.l.google.com:19302' },
+  { urls: 'stun:stun.ovenmediaengine.com:13478' },
+  { urls: 'turn:85.190.101.80:3478', username: 'stream', credential: 'c1d46f0dbe35bb713c164e552a5c7b87' },
+  { urls: 'turn:85.190.101.80:3478?transport=tcp', username: 'stream', credential: 'c1d46f0dbe35bb713c164e552a5c7b87' }
+];
 
 function _destroyWhep() {
   if (whepPc) { try { whepPc.close(); } catch(e) {} whepPc = null; }
@@ -24,6 +36,7 @@ function _destroyWhep() {
 
 function startWhep() {
   _destroyWhep();
+  _iceRestartCount = 0;
   vid = _ensureVideoEl();
   if (!vid) { scheduleRetry(); return; }
   var vol = volSlider ? parseFloat(volSlider.value)/100 : 1;
@@ -48,7 +61,7 @@ function startWhep() {
 
     if (msg.command === 'offer') {
       var sdp = msg.sdp;
-      whepPc = new RTCPeerConnection({ iceServers: [] });
+      whepPc = new RTCPeerConnection({ iceServers: _webrtcIceServers, iceTransportPolicy: 'all', bundlePolicy: 'max-bundle', rtcpMuxPolicy: 'require' });
 
       whepPc.ontrack = function(event) {
         if (event.streams && event.streams[0]) {
@@ -75,10 +88,32 @@ function startWhep() {
       whepPc.oniceconnectionstatechange = function() {
         if (!whepPc) return;
         var st = whepPc.iceConnectionState;
-        if (st === 'failed' || st === 'disconnected') {
+        if (st === 'failed') {
           _stopStallWatchdog();
-          _destroyWhep();
-          scheduleRetry();
+          if (_iceRestartCount < MAX_ICE_RESTARTS) {
+            _iceRestartCount++;
+            _destroyWhep();
+            setTimeout(function() { startWhep(); }, 1000);
+          } else {
+            _destroyWhep();
+            scheduleRetry();
+          }
+        } else if (st === 'disconnected') {
+          if (_iceRestartCount < MAX_ICE_RESTARTS) {
+            _iceRestartCount++;
+            setTimeout(function() {
+              if (whepPc && whepPc.iceConnectionState === 'disconnected') {
+                _destroyWhep();
+                startWhep();
+              }
+            }, 3000);
+          } else {
+            _stopStallWatchdog();
+            _destroyWhep();
+            scheduleRetry();
+          }
+        } else if (st === 'connected' || st === 'completed') {
+          _iceRestartCount = 0;
         }
       };
 
