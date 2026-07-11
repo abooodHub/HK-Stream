@@ -1488,3 +1488,9 @@ canvas.bitrate-chart{width:100%!important;height:180px!important}
 @media(hover:none){.yt-vol-slide-wrap{width:52px!important}}
 
 .mobile-bottom-nav{display:none}
+
+/* ── jsVectorMap: إلغاء اللون الأزرق الافتراضي عند تحديد دولة ── */
+.jvectormap-container .jvectormap-zoomin,
+.jvectormap-container .jvectormap-zoomout{color:var(--text2);background:var(--bg3);border:1px solid var(--line)}
+.jvectormap-container .jvectormap-zoomin:hover,
+.jvectormap-container .jvectormap-zoomout:hover{background:var(--bg4);color:var(--text)}
