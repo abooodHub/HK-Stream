@@ -339,7 +339,6 @@
       if (!menu) return;
       menu.innerHTML = '';
 
-      /* Auto option */
       var autoItem = document.createElement('div');
       autoItem.className = 'hk-quality-item active';
       autoItem.setAttribute('data-level', '-1');
@@ -350,16 +349,15 @@
       for (var i = 0; i < levels.length; i++) {
         (function(idx) {
           var lev = levels[idx];
-          var h = lev.height || lev.bitrate / 1000;
-          var label = lev.height ? lev.height + 'p' : Math.round(lev.bitrate / 1000) + 'kbps';
-          if (lev.height === 1080 || lev.height === 720 || idx === 0 || idx === levels.length - 1) {
-            var item = document.createElement('div');
-            item.className = 'hk-quality-item';
-            item.setAttribute('data-level', idx);
-            item.innerHTML = '<span class="hk-qcheck"></span><span>' + label + '</span>';
-            item.onclick = function() { setQuality(idx); };
-            menu.appendChild(item);
-          }
+          var label;
+          if (!lev.height) label = 'مصدر';
+          else label = lev.height + 'p';
+          var item = document.createElement('div');
+          item.className = 'hk-quality-item';
+          item.setAttribute('data-level', idx);
+          item.innerHTML = '<span class="hk-qcheck"></span><span>' + label + '</span>';
+          item.onclick = function() { setQuality(idx); };
+          menu.appendChild(item);
         })(i);
       }
     }
@@ -379,7 +377,7 @@
         if (level === -1) {
           label.textContent = 'HD';
         } else if (hls && hls.levels && hls.levels[level]) {
-          label.textContent = (hls.levels[level].height || '?') + 'p';
+          label.textContent = hls.levels[level].height ? (hls.levels[level].height + 'p') : 'مصدر';
         }
       }
       updateStats();
@@ -419,7 +417,7 @@
       var rEl = document.getElementById('hkStatRes');
       var bEl = document.getElementById('hkStatBuffer');
       var brEl = document.getElementById('hkStatBitrate');
-      if (qEl) qEl.textContent = currentLevel === -1 ? 'تلقائي' : (hls.levels[currentLevel] ? (hls.levels[currentLevel].height || '?') + 'p' : '—');
+      if (qEl) qEl.textContent = currentLevel === -1 ? 'تلقائي' : (hls.levels[currentLevel] ? (hls.levels[currentLevel].height ? (hls.levels[currentLevel].height + 'p') : 'مصدر') : '—');
       if (rEl) rEl.textContent = (video.videoWidth || '?') + 'x' + (video.videoHeight || '?');
       if (bEl) bEl.textContent = video.buffered.length ? (video.buffered.end(video.buffered.length - 1) - video.currentTime).toFixed(1) + 's' : '—';
       if (brEl && hls.levels && hls.currentLevel >= 0) {
