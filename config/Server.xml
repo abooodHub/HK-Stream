@@ -95,8 +95,8 @@
             <LLHLS>
               <OriginMode>true</OriginMode>
               <ChunkDuration>0.5</ChunkDuration>
-              <PartHoldBack>2.0</PartHoldBack>
-              <SegmentDuration>5</SegmentDuration>
+              <PartHoldBack>3.0</PartHoldBack>
+              <SegmentDuration>6</SegmentDuration>
               <SegmentCount>5</SegmentCount>
               <CreateDefaultPlaylist>true</CreateDefaultPlaylist>
               <CrossDomains><Url>*</Url></CrossDomains>
