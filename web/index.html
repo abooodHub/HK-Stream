@@ -286,13 +286,13 @@
 
       if (Hls.isSupported()) {
         hls = new Hls({
-          liveSyncDurationCount: 3,
-          liveMaxLatencyDurationCount: 8,
-          maxBufferLength: 15,
-          maxMaxBufferLength: 30,
+          liveSyncDurationCount: 2,
+          liveMaxLatencyDurationCount: 3,
+          maxBufferLength: 5,
+          maxMaxBufferLength: 12,
           lowLatencyMode: true,
           enableWorker: true,
-          backBufferLength: 30
+          backBufferLength: 10
         });
 
         hls.loadSource(LLHLS_URL);
