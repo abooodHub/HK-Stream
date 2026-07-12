@@ -346,19 +346,30 @@
       autoItem.onclick = function() { setQuality(-1); };
       menu.appendChild(autoItem);
 
+      var maxBitrate = 0;
       for (var i = 0; i < levels.length; i++) {
+        if (levels[i].bitrate > maxBitrate) maxBitrate = levels[i].bitrate;
+      }
+
+      var sorted = [];
+      for (var i = 0; i < levels.length; i++) sorted.push(i);
+      sorted.sort(function(a, b) { return levels[b].bitrate - levels[a].bitrate; });
+
+      for (var j = 0; j < sorted.length; j++) {
         (function(idx) {
           var lev = levels[idx];
           var label;
-          if (!lev.height) label = 'مصدر';
-          else label = lev.height + 'p';
+          if (lev.bitrate === maxBitrate && !lev.height) label = 'مصدر';
+          else if (lev.bitrate === maxBitrate) label = 'مصدر';
+          else if (lev.height) label = lev.height + 'p';
+          else label = Math.round(lev.bitrate / 1000) + ' kbps';
           var item = document.createElement('div');
           item.className = 'hk-quality-item';
           item.setAttribute('data-level', idx);
           item.innerHTML = '<span class="hk-qcheck"></span><span>' + label + '</span>';
           item.onclick = function() { setQuality(idx); };
           menu.appendChild(item);
-        })(i);
+        })(sorted[j]);
       }
     }
 
