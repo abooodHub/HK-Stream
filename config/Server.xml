@@ -69,9 +69,9 @@
               </Playlist>
               <Encodes>
                 <Video><Name>bypass_video</Name><Bypass>true</Bypass></Video>
-                <Video><Name>1080p</Name><Codec>h264</Codec><Bitrate>5000000</Bitrate><Width>1920</Width><Height>1080</Height><Framerate>60</Framerate><Preset>faster</Preset></Video>
-                <Video><Name>720p</Name><Codec>h264</Codec><Bitrate>2500000</Bitrate><Width>1280</Width><Height>720</Height><Framerate>60</Framerate><Preset>faster</Preset></Video>
-                <Video><Name>480p</Name><Codec>h264</Codec><Bitrate>1000000</Bitrate><Width>854</Width><Height>480</Height><Framerate>30</Framerate><Preset>fast</Preset></Video>
+                <Video><Name>1080p</Name><Codec>h264</Codec><Bitrate>10000000</Bitrate><Width>1920</Width><Height>1080</Height><Framerate>60</Framerate><Preset>faster</Preset></Video>
+                <Video><Name>720p</Name><Codec>h264</Codec><Bitrate>5000000</Bitrate><Width>1280</Width><Height>720</Height><Framerate>60</Framerate><Preset>faster</Preset></Video>
+                <Video><Name>480p</Name><Codec>h264</Codec><Bitrate>2000000</Bitrate><Width>854</Width><Height>480</Height><Framerate>30</Framerate><Preset>fast</Preset></Video>
                 <Audio><Name>aac_audio</Name><Codec>aac</Codec><Bitrate>192000</Bitrate><Samplerate>48000</Samplerate><Channel>2</Channel><BypassIfMatch><Codec>eq</Codec></BypassIfMatch></Audio>
                 <Audio><Name>opus_audio</Name><Codec>opus</Codec><Bitrate>128000</Bitrate><Samplerate>48000</Samplerate><Channel>2</Channel><BypassIfMatch><Codec>eq</Codec></BypassIfMatch></Audio>
               </Encodes>
