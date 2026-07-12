@@ -7,147 +7,122 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="mobile-web-app-capable" content="yes"/>
   <meta name="theme-color" content="#07070f"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"/>
   <link rel="manifest" href="/manifest.json"/>
-  <title>H&amp;K — بث مباشر</title>
+  <title>H&K — بث مباشر</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&family=Outfit:wght@600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/css/fonts.css?v=2">
-  <link rel="stylesheet" href="/css/common.css?v=304">
+  <link rel="stylesheet" href="/css/fonts.css?v=2"/>
+  <link rel="stylesheet" href="/css/common.css?v=305"/>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-
   <style>
-  /* ── HEADER ── */
-  .site-header{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:56px;gap:14px;direction:ltr;background:rgba(7,7,16,.92);backdrop-filter:blur(30px) saturate(200%);border-bottom:1px solid rgba(201,162,39,.08);position:sticky;top:0;z-index:50;box-shadow:0 2px 20px -6px rgba(0,0,0,.5)}
-  .site-header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,162,39,.2) 30%,rgba(201,162,39,.2) 70%,transparent);pointer-events:none}
-  .hdr-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
-  .hdr-logo-box{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font-en);font-weight:900;font-size:.72rem;color:#07070f;background:linear-gradient(140deg,var(--gold-xl) 0%,var(--gold-l) 35%,var(--gold) 65%,var(--gold-d) 100%);box-shadow:0 3px 14px -4px rgba(201,162,39,.5);position:relative;overflow:hidden;transition:transform .25s var(--ease)}
-  .hdr-logo-box::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.3) 0%,transparent 50%);border-radius:inherit;pointer-events:none}
-  .hdr-brand:hover .hdr-logo-box{transform:scale(1.06)}
-  .hdr-logo-text{font-family:var(--font-en);font-weight:800;font-size:1rem;background:linear-gradient(135deg,var(--gold-xl),var(--gold-l) 55%,var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-  .hdr-live-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);transition:background .3s}
-  .hdr-live-dot.on{background:var(--green);box-shadow:0 0 8px rgba(62,207,130,.5);animation:pulse-dot 2s infinite}
+    .site-header{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:56px;gap:14px;direction:ltr;background:rgba(7,7,16,.92);backdrop-filter:blur(30px) saturate(200%);border-bottom:1px solid rgba(201,162,39,.08);position:sticky;top:0;z-index:50;box-shadow:0 2px 20px -6px rgba(0,0,0,.5)}
+    .site-header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,162,39,.2) 30%,rgba(201,162,39,.2) 70%,transparent);pointer-events:none}
+    .hdr-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+    .hdr-logo-box{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font-en);font-weight:900;font-size:.72rem;color:#07070f;background:linear-gradient(140deg,var(--gold-xl) 0%,var(--gold-l) 35%,var(--gold) 65%,var(--gold-d) 100%);box-shadow:0 3px 14px -4px rgba(201,162,39,.5);position:relative;overflow:hidden;transition:transform .25s var(--ease)}
+    .hdr-logo-box::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.3) 0%,transparent 50%);border-radius:inherit;pointer-events:none}
+    .hdr-brand:hover .hdr-logo-box{transform:scale(1.06)}
+    .hdr-logo-text{font-family:var(--font-en);font-weight:800;font-size:1rem;background:linear-gradient(135deg,var(--gold-xl),var(--gold-l) 55%,var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .hdr-live-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);transition:background .3s}
+    .hdr-live-dot.on{background:var(--green);box-shadow:0 0 8px rgba(62,207,130,.5);animation:pulse-dot 2s infinite}
+    @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
 
-  .match-chip{display:none;align-items:center;gap:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:6px 14px;cursor:pointer;text-decoration:none;color:var(--text);transition:all .25s var(--ease);white-space:nowrap;min-width:220px;max-width:360px}
-  .match-chip:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);transform:translateY(-1px)}
-  .match-chip.live-chip{border-color:rgba(220,40,40,.25);background:rgba(220,40,40,.05);animation:chip-live-glow 2.5s ease-in-out infinite}
-  @keyframes chip-live-glow{0%,100%{box-shadow:0 0 0 0 rgba(220,40,40,0)}50%{box-shadow:0 0 20px -4px rgba(220,40,40,.15)}}
-  .match-chip.done-chip{opacity:.5;border-color:rgba(255,255,255,.04)}
-  .chip-tag{font-size:.5rem;font-weight:800;padding:2px 7px;border-radius:4px;white-space:nowrap;line-height:1.3;flex-shrink:0}
-  .chip-tag.live-tag{background:rgba(220,40,40,.18);color:#ff5252;border:1px solid rgba(220,40,40,.28)}
-  .chip-tag.upcoming-tag{background:rgba(201,162,39,.1);color:var(--gold);border:1px solid rgba(201,162,39,.18)}
-  .chip-tag.done-tag{background:rgba(255,255,255,.05);color:var(--text3);border:1px solid rgba(255,255,255,.06)}
-  .chip-teams{display:flex;align-items:center;gap:6px;flex:1;min-width:0}
-  .chip-team{display:flex;align-items:center;gap:5px;min-width:0}
-  .chip-team.away{flex-direction:row-reverse}
-  .chip-crest{width:22px;height:22px;object-fit:contain;border-radius:3px;background:rgba(255,255,255,.05);padding:1px}
-  .chip-team-name{font-size:.78rem;font-weight:700;color:var(--text);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .chip-score{font-size:.92rem;font-weight:900;color:var(--text);padding:0 6px;flex-shrink:0;font-family:var(--font-en)}
-  .chip-score.live-score{color:#ff5252;animation:live-blink 1.5s ease-in-out infinite}
-  .chip-time{font-size:.82rem;font-weight:800;color:var(--gold);padding:0 6px;flex-shrink:0;font-family:var(--font-en)}
-  @keyframes live-blink{0%,100%{opacity:1}50%{opacity:.55}}
-  .chip-cd{font-size:.6rem;font-weight:700;color:var(--gold-l);background:rgba(201,162,39,.08);border:1px solid rgba(201,162,39,.15);border-radius:6px;padding:2px 8px;display:inline-flex;align-items:center;gap:3px;font-variant-numeric:tabular-nums;flex-shrink:0}
-  .chip-cd.urgent{color:#ff5252;background:rgba(220,40,40,.1);border-color:rgba(220,40,40,.2);animation:live-blink 1s ease-in-out infinite}
+    .match-chip{display:none;align-items:center;gap:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:6px 14px;cursor:pointer;text-decoration:none;color:var(--text);transition:all .25s var(--ease);white-space:nowrap;min-width:220px;max-width:360px}
+    .match-chip:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1)}
+    .match-chip.live-chip{border-color:rgba(220,40,40,.25);background:rgba(220,40,40,.05)}
+    .match-chip.done-chip{opacity:.5}
+    .chip-tag{font-size:.55rem;font-weight:800;padding:2px 7px;border-radius:4px;white-space:nowrap;line-height:1.3;flex-shrink:0}
+    .chip-tag.live-tag{background:rgba(220,40,40,.18);color:#ff5252;border:1px solid rgba(220,40,40,.28)}
+    .chip-tag.upcoming-tag{background:rgba(201,162,39,.1);color:var(--gold);border:1px solid rgba(201,162,39,.18)}
+    .chip-tag.done-tag{background:rgba(255,255,255,.05);color:var(--text3);border:1px solid rgba(255,255,255,.06)}
+    .chip-teams{display:flex;align-items:center;gap:6px;flex:1;min-width:0}
+    .chip-team{display:flex;align-items:center;gap:5px;min-width:0}
+    .chip-team.away{flex-direction:row-reverse}
+    .chip-crest{width:22px;height:22px;object-fit:contain;border-radius:3px;background:rgba(255,255,255,.05);padding:1px}
+    .chip-team-name{font-size:.78rem;font-weight:700;color:var(--text);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .chip-score{font-size:.92rem;font-weight:900;color:var(--text);padding:0 6px;flex-shrink:0;font-family:var(--font-en)}
+    .chip-score.live-score{color:#ff5252;animation:live-blink 1.5s ease-in-out infinite}
+    .chip-time{font-size:.82rem;font-weight:800;color:var(--gold);padding:0 6px;flex-shrink:0;font-family:var(--font-en)}
+    @keyframes live-blink{0%,100%{opacity:1}50%{opacity:.55}}
+    .chip-cd{font-size:.6rem;font-weight:700;color:var(--gold-l);background:rgba(201,162,39,.08);border:1px solid rgba(201,162,39,.15);border-radius:6px;padding:2px 8px;display:inline-flex;align-items:center;gap:3px;font-variant-numeric:tabular-nums;flex-shrink:0}
+    .chip-cd.urgent{color:#ff5252;background:rgba(220,40,40,.1);border-color:rgba(220,40,40,.2)}
 
-  .hdr-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
-  .hdr-btn{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:9px;border:none;cursor:pointer;font-family:var(--font);font-size:.82rem;font-weight:700;transition:all .2s var(--ease);text-decoration:none;color:var(--text2);background:rgba(255,255,255,.04)}
-  .hdr-btn:hover{background:rgba(255,255,255,.08);color:var(--text)}
-  .hdr-btn svg{flex-shrink:0}
-  .hdr-btn-lbl{display:block}
-  .viewers-badge{display:flex;align-items:center;gap:4px;font-size:.82rem;font-weight:700;color:var(--text2);padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05)}
-  .viewers-badge b{color:var(--text);font-family:var(--font-en)}
+    .hdr-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+    .hdr-btn{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:9px;border:none;cursor:pointer;font-family:var(--font);font-size:.82rem;font-weight:700;transition:all .2s var(--ease);text-decoration:none;color:var(--text2);background:rgba(255,255,255,.04)}
+    .hdr-btn:hover{background:rgba(255,255,255,.08);color:var(--text)}
+    .hdr-btn svg{flex-shrink:0}
+    .hdr-btn-lbl{display:block}
+    .viewers-badge{display:flex;align-items:center;gap:4px;font-size:.82rem;font-weight:700;color:var(--text2);padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05)}
+    .viewers-badge b{color:var(--text);font-family:var(--font-en)}
+    @media(max-width:900px){.match-chip{min-width:180px;padding:5px 10px}.chip-team-name{max-width:60px}}
+    @media(max-width:700px){.hdr-btn-lbl{display:none}.hdr-btn{padding:6px 10px}.chip-team-name{max-width:50px}.chip-crest{width:18px;height:18px}}
+    @media(max-width:500px){.match-chip{display:none!important}.hdr-logo-text{display:none}.viewers-badge{font-size:.7rem;padding:5px 8px}}
 
-  @media(max-width:900px){.match-chip{min-width:180px;padding:5px 10px}.chip-team-name{max-width:60px}}
-  @media(max-width:700px){.hdr-btn-lbl{display:none}.hdr-btn{padding:6px 10px}.chip-team-name{max-width:50px}.chip-crest{width:18px;height:18px}}
-  @media(max-width:500px){.match-chip{display:none!important}.hdr-logo-text{display:none}.viewers-badge{font-size:.7rem;padding:5px 8px}}
+    .player-wrap{width:100%;max-width:900px;margin:0 auto;padding:12px 12px 0}
+    .player-box{position:relative;width:100%;border-radius:var(--radius);overflow:hidden;background:#000;box-shadow:0 4px 40px rgba(0,0,0,.6)}
+    .player-ratio{position:relative;width:100%;padding-top:56.25%}
+    .player-inner{position:absolute;inset:0}
+    body.player-compact .player-wrap{max-width:900px}
+    body:not(.player-compact) .player-wrap{max-width:100%;padding:0}
+    body:not(.player-compact) .player-ratio{padding-top:0;height:calc(100vh - 56px)!important}
+    body:not(.player-compact){overflow:hidden!important}
 
-  /* ── PLAYER ── */
-  .player-wrap{width:100%;max-width:900px;margin:0 auto;padding:12px 12px 0}
-  .player-box{position:relative;width:100%;border-radius:var(--radius);overflow:hidden;background:#000;box-shadow:0 4px 40px rgba(0,0,0,.6)}
-  .player-ratio{position:relative;width:100%;padding-top:56.25%}
-  .player-inner{position:absolute;inset:0}
+    .hk-player{position:absolute;inset:0;background:#000;display:flex;align-items:center;justify-content:center;direction:ltr}
+    .hk-player video{width:100%;height:100%;object-fit:contain;display:block}
+    .hk-controls{position:absolute;bottom:0;left:0;right:0;padding:8px 12px;display:flex;align-items:center;gap:8px;background:linear-gradient(transparent,rgba(0,0,0,.85));z-index:10;direction:ltr;transition:opacity .3s}
+    .hk-player:not(:hover) .hk-controls:not(.show){opacity:0}
+    .hk-controls.show{opacity:1}
+    .hk-btn{background:none;border:none;color:#fff;cursor:pointer;padding:6px;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+    .hk-btn:hover{background:rgba(255,255,255,.15)}
+    .hk-vol-wrap{display:flex;align-items:center;gap:4px}
+    .hk-vol-slider{width:60px;height:4px;-webkit-appearance:none;appearance:none;background:rgba(255,255,255,.3);border-radius:2px;outline:none;cursor:pointer}
+    .hk-vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;cursor:pointer}
+    .hk-quality-wrap{position:relative}
+    .hk-qlabel{font-size:.7rem;font-weight:700;color:#fff;background:rgba(255,255,255,.15);padding:3px 8px;border-radius:4px;cursor:pointer;border:1px solid rgba(255,255,255,.2);font-family:var(--font-en);white-space:nowrap}
+    .hk-qlabel:hover{background:rgba(255,255,255,.25)}
+    .hk-quality-menu{position:absolute;bottom:calc(100% + 8px);right:0;background:rgba(20,20,40,.95);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:6px 0;min-width:140px;display:none;z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.5);direction:ltr}
+    .hk-quality-menu.open{display:block}
+    .hk-quality-item{padding:8px 14px;font-size:.78rem;font-weight:600;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .15s}
+    .hk-quality-item:hover{background:rgba(255,255,255,.08);color:var(--text)}
+    .hk-quality-item.active{color:var(--gold)}
+    .hk-quality-item .hk-qcheck{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .hk-quality-item.active .hk-qcheck{border-color:var(--gold);background:var(--gold)}
+    .hk-quality-item.active .hk-qcheck::after{content:'';width:5px;height:5px;border-radius:50%;background:#000}
+    .hk-time{font-size:.7rem;font-weight:600;color:rgba(255,255,255,.7);font-family:var(--font-en);white-space:nowrap;margin-right:auto}
+    .hk-buffering{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:5;pointer-events:none}
+    .hk-buffering.hidden{display:none}
+    .hk-spinner{width:44px;height:44px;border:3px solid rgba(255,255,255,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .hk-big-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:6;cursor:pointer}
+    .hk-big-play.hidden{display:none}
+    .hk-big-play-icon{width:64px;height:64px;border-radius:50%;background:rgba(201,162,39,.85);display:flex;align-items:center;justify-content:center;transition:transform .2s,background .2s;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+    .hk-big-play:hover .hk-big-play-icon{transform:scale(1.08);background:var(--gold)}
+    .hk-offline{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(0,0,0,.7);z-index:4;color:var(--text2);font-size:.9rem;pointer-events:none;direction:ltr}
+    .hk-offline.hidden{display:none}
+    .hk-offline svg{width:48px;height:48px;opacity:.3}
+    .hk-stats{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.85);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 16px;color:#fff;font-size:.75rem;z-index:20;min-width:160px;display:none;backdrop-filter:blur(10px);direction:ltr}
+    .hk-stats.show{display:block}
+    .hk-stats-row{display:flex;justify-content:space-between;margin:4px 0}
+    .hk-stats-row span:first-child{color:rgba(255,255,255,.4)}
 
-  body.player-compact .player-wrap{max-width:900px}
-  body:not(.player-compact) .player-wrap{max-width:100%;padding:0}
-  body:not(.player-compact) .player-ratio{padding-top:0;height:calc(100vh - 56px)!important}
-  body:not(.player-compact){overflow:hidden!important}
-
-  /* Custom Player UI */
-  .hk-player{position:absolute;inset:0;background:#000;display:flex;align-items:center;justify-content:center;direction:ltr}
-  .hk-player video{width:100%;height:100%;object-fit:contain;display:block}
-
-  /* Controls bar */
-  .hk-controls{position:absolute;bottom:0;left:0;right:0;padding:8px 12px;display:flex;align-items:center;gap:8px;background:linear-gradient(transparent,rgba(0,0,0,.8));z-index:10;opacity:1;transition:opacity .3s;direction:ltr}
-  .hk-player:not(:hover) .hk-controls:not(.hk-controls-show){opacity:0}
-  .hk-controls.hk-controls-show{opacity:1}
-
-  .hk-btn{background:none;border:none;color:#fff;cursor:pointer;padding:6px;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:background .15s}
-  .hk-btn:hover{background:rgba(255,255,255,.15)}
-
-  /* Volume */
-  .hk-vol-wrap{display:flex;align-items:center;gap:4px}
-  .hk-vol-slider{width:60px;height:4px;-webkit-appearance:none;appearance:none;background:rgba(255,255,255,.3);border-radius:2px;outline:none;cursor:pointer}
-  .hk-vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;cursor:pointer}
-
-  /* Quality menu */
-  .hk-quality-wrap{position:relative}
-  .hk-qlabel{font-size:.7rem;font-weight:700;color:#fff;background:rgba(255,255,255,.15);padding:3px 8px;border-radius:4px;cursor:pointer;border:1px solid rgba(255,255,255,.2);font-family:var(--font-en);white-space:nowrap}
-  .hk-qlabel:hover{background:rgba(255,255,255,.25)}
-  .hk-quality-menu{position:absolute;bottom:calc(100% + 8px);right:0;background:rgba(20,20,40,.95);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:6px 0;min-width:140px;display:none;z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.5);direction:ltr}
-  .hk-quality-menu.open{display:block}
-  .hk-quality-item{padding:8px 14px;font-size:.78rem;font-weight:600;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .15s}
-  .hk-quality-item:hover{background:rgba(255,255,255,.08);color:var(--text)}
-  .hk-quality-item.active{color:var(--gold)}
-  .hk-quality-item .hk-qcheck{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .hk-quality-item.active .hk-qcheck{border-color:var(--gold);background:var(--gold)}
-  .hk-quality-item.active .hk-qcheck::after{content:'';width:5px;height:5px;border-radius:50%;background:#000}
-
-  .hk-time{font-size:.7rem;font-weight:600;color:rgba(255,255,255,.7);font-family:var(--font-en);white-space:nowrap;margin-right:auto}
-
-  /* Buffering spinner */
-  .hk-buffering{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:5;pointer-events:none}
-  .hk-buffering.hidden{display:none}
-  .hk-spinner{width:44px;height:44px;border:3px solid rgba(255,255,255,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-
-  /* Big play button */
-  .hk-big-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:6;cursor:pointer}
-  .hk-big-play.hidden{display:none}
-  .hk-big-play-icon{width:64px;height:64px;border-radius:50%;background:rgba(201,162,39,.85);display:flex;align-items:center;justify-content:center;transition:transform .2s,background .2s;box-shadow:0 4px 20px rgba(0,0,0,.4)}
-  .hk-big-play:hover .hk-big-play-icon{transform:scale(1.08);background:var(--gold)}
-
-  /* Offline */
-  .hk-offline{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(0,0,0,.7);z-index:4;color:var(--text2);font-size:.9rem;pointer-events:none;direction:ltr}
-  .hk-offline.hidden{display:none}
-  .hk-offline svg{width:48px;height:48px;opacity:.3}
-
-  /* Stats */
-  .hk-stats{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.85);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 16px;color:#fff;font-size:.75rem;z-index:20;min-width:160px;display:none;backdrop-filter:blur(10px);direction:ltr}
-  .hk-stats.show{display:block}
-  .hk-stats-row{display:flex;justify-content:space-between;margin:4px 0}
-  .hk-stats-row span:first-child{color:rgba(255,255,255,.4)}
-
-  /* Password overlay */
-  #password-overlay{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(7,7,15,.98);backdrop-filter:blur(20px)}
-  #password-overlay>div{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px;width:100%;max-width:400px;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,.6)}
-  .pw-logo{font-family:var(--font-en);font-size:2.2rem;font-weight:700;color:var(--gold);margin-bottom:12px}
-  #password-overlay h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:#fff}
-  #password-overlay p{font-size:.88rem;color:var(--text2);margin-bottom:24px}
-  #password-overlay input{width:100%;padding:12px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-family:var(--font);font-size:1rem;outline:none;text-align:center;margin-bottom:16px;transition:border-color .2s}
-  #password-overlay input:focus{border-color:var(--gold)}
-  #password-overlay button{width:100%;padding:12px;background:var(--gold);border:none;border-radius:8px;color:#000;font-family:var(--font);font-size:1rem;font-weight:700;cursor:pointer;transition:background .2s}
-  #password-overlay button:hover{background:var(--gold-l)}
-  #cf-turnstile-container{margin-bottom:16px;display:flex;justify-content:center}
-  #cf-turnstile-container iframe{max-width:100%}
+    #password-overlay{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(7,7,15,.98);backdrop-filter:blur(20px)}
+    #password-overlay>div{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px;width:100%;max-width:400px;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,.6)}
+    .pw-logo{font-family:var(--font-en);font-size:2.2rem;font-weight:700;color:var(--gold);margin-bottom:12px}
+    #password-overlay h3{font-size:1.15rem;font-weight:700;margin-bottom:8px;color:#fff}
+    #password-overlay p{font-size:.88rem;color:var(--text2);margin-bottom:24px}
+    #password-overlay input{width:100%;padding:12px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-family:var(--font);font-size:1rem;outline:none;text-align:center;margin-bottom:16px;transition:border-color .2s}
+    #password-overlay input:focus{border-color:var(--gold)}
+    #password-overlay button{width:100%;padding:12px;background:var(--gold);border:none;border-radius:8px;color:#000;font-family:var(--font);font-size:1rem;font-weight:700;cursor:pointer;transition:background .2s}
+    #password-overlay button:hover{background:var(--gold-l)}
+    #cf-turnstile-container{margin-bottom:16px;display:flex;justify-content:center}
+    #cf-turnstile-container iframe{max-width:100%}
   </style>
 </head>
 <body class="player-compact">
 
-  <!-- ═══ HEADER ═══ -->
   <header class="site-header">
-    <a class="hdr-brand" href="/" title="H&amp;K Stream">
+    <a class="hdr-brand" href="/" title="H&K Stream">
       <div class="hdr-logo-box">HK</div>
       <span class="hdr-logo-text">H &amp; K</span>
       <span class="hdr-live-dot" id="hdrLiveDot"></span>
@@ -174,10 +149,10 @@
         <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
         <b id="headViewersNum">0</b>
       </div>
-      <button class="hdr-btn" onclick="toggleTheater()" title="وضع المسرح" id="thaterBtn">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" id="thaterIconWide"><path d="M19 6H5c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H5V8h14v8z"/></svg>
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" id="thaterIconCompact" style="display:none"><path d="M19 19H5V5h14v14zM3 3v18h18V3H3z"/></svg>
-        <span class="hdr-btn-lbl" id="thaterLabel">توسيط</span>
+      <button class="hdr-btn" onclick="toggleTheater()" title="وضع المسرح" id="theaterBtn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" id="theaterIconWide"><path d="M19 6H5c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H5V8h14v8z"/></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" id="theaterIconCompact" style="display:none"><path d="M19 19H5V5h14v14zM3 3v18h18V3H3z"/></svg>
+        <span class="hdr-btn-lbl" id="theaterLabel">توسيط</span>
       </button>
       <a class="hdr-btn" href="/matches.html" target="_blank" title="جدول المباريات">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
@@ -186,37 +161,21 @@
     </div>
   </header>
 
-  <!-- ═══ PLAYER ═══ -->
   <div class="player-wrap">
     <div class="player-box">
       <div class="player-ratio">
         <div class="player-inner">
           <div class="hk-player" id="hkPlayer" dir="ltr">
-            <video id="hkVideo" playsinline></video>
-
-            <!-- Buffering -->
+            <video id="hkVideo" playsinline muted></video>
             <div class="hk-buffering" id="hkBuffering"><div class="hk-spinner"></div></div>
+            <div class="hk-big-play" id="hkBigPlay"><div class="hk-big-play-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="#000"><path d="M8 5v14l11-7z"/></svg></div></div>
+            <div class="hk-offline" id="hkOffline"><svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg><span>البث غير متصل</span></div>
 
-            <!-- Big play -->
-            <div class="hk-big-play" id="hkBigPlay">
-              <div class="hk-big-play-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="#000"><path d="M8 5v14l11-7z"/></svg>
-              </div>
-            </div>
-
-            <!-- Offline -->
-            <div class="hk-offline" id="hkOffline">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg>
-              <span>البث غير متصل حالياً</span>
-            </div>
-
-            <!-- Controls -->
             <div class="hk-controls" id="hkControls">
               <button class="hk-btn" id="hkPlayBtn" title="تشغيل/إيقاف">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="hkPlayIcon"><path d="M8 5v14l11-7z"/></svg>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="hkPauseIcon" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
               </button>
-
               <div class="hk-vol-wrap">
                 <button class="hk-btn" id="hkVolBtn" title="الصوت">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" id="hkVolIcon"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
@@ -224,34 +183,24 @@
                 </button>
                 <input type="range" class="hk-vol-slider" id="hkVolSlider" min="0" max="100" value="100">
               </div>
-
               <span class="hk-time" id="hkTime"></span>
-
               <div class="hk-quality-wrap" id="hkQualityWrap">
                 <span class="hk-qlabel" id="hkQLabel">HD</span>
-                <div class="hk-quality-menu" id="hkQualityMenu">
-                  <div class="hk-quality-item active" data-level="-1">
-                    <span class="hk-qcheck"></span>
-                    <span>تلقائي</span>
-                  </div>
-                </div>
+                <div class="hk-quality-menu" id="hkQualityMenu"></div>
               </div>
-
               <button class="hk-btn" id="hkStatsBtn" title="الإحصائيات">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
               </button>
-
               <button class="hk-btn" id="hkFullscreenBtn" title="ملء الشاشة">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" id="hkFsIcon"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" id="hkFsExitIcon" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
               </button>
             </div>
 
-            <!-- Stats panel -->
             <div class="hk-stats" id="hkStats">
               <div class="hk-stats-row"><span>الجودة</span><span id="hkStatQuality">تلقائي</span></div>
               <div class="hk-stats-row"><span>الدقة</span><span id="hkStatRes">—</span></div>
-              <div class="hk-stats-row"><span>ال-buffer</span><span id="hkStatBuffer">—</span></div>
+              <div class="hk-stats-row"><span>الـ Buffer</span><span id="hkStatBuffer">—</span></div>
               <div class="hk-stats-row"><span>Bitrate</span><span id="hkStatBitrate">—</span></div>
             </div>
           </div>
@@ -263,322 +212,210 @@
   <div id="toast"></div>
   <footer class="site-footer">H&amp;K Stream</footer>
 
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
-  <script src="/js/matches-common.js?v=3"></script>
+  <script src="/js/matches-common.js?v=4"></script>
 
   <script>
-  /* ═══════════════════════════════════════
-     CUSTOM HLS PLAYER (LLHLS ONLY)
-     ═══════════════════════════════════════ */
   (function() {
-    var hls = null;
-    var video = null;
-    var currentLevel = -1; /* -1 = auto */
-    var heartbeatTimer = null;
-    var controlsTimeout = null;
-
+    var hls = null, video = null, currentLevel = -1, heartbeatTimer = null, controlsTimeout = null;
     var LLHLS_URL = location.protocol + '//' + location.host + '/llhls/app/stream/master.m3u8';
 
+    function $(id) { return document.getElementById(id); }
+
     function createPlayer() {
-      video = document.getElementById('hkVideo');
+      video = $('hkVideo');
       if (!video) return;
 
       if (Hls.isSupported()) {
         hls = new Hls({
           liveSyncDurationCount: 3,
           liveMaxLatencyDurationCount: 6,
-          maxBufferLength: 10,
-          maxMaxBufferLength: 20,
+          maxBufferLength: 15,
+          maxMaxBufferLength: 30,
+          backBufferLength: 30,
           lowLatencyMode: true,
-          enableWorker: true,
-          backBufferLength: 20
+          enableWorker: true
         });
-
         hls.loadSource(LLHLS_URL);
         hls.attachMedia(video);
-
         hls.on(Hls.Events.MANIFEST_PARSED, function(e, data) {
           buildQualityMenu(data.levels);
-          showBigPlay();
-          video.play().catch(function() { showBigPlay(); });
+          show('hkBigPlay');
+          video.play().catch(function() { show('hkBigPlay'); });
         });
-
-        hls.on(Hls.Events.LEVEL_SWITCHED, function(e, data) {
-          updateStats();
-        });
-
+        hls.on(Hls.Events.LEVEL_SWITCHED, updateStats);
         hls.on(Hls.Events.ERROR, function(e, data) {
-          if (data.fatal) {
-            hls.destroy();
-            hls = null;
-            setTimeout(createPlayer, 3000);
-          }
+          if (data.fatal) { hls.destroy(); hls = null; setTimeout(createPlayer, 3000); }
         });
-
-        video.addEventListener('waiting', function() { showBuffering(true); });
-        video.addEventListener('playing', function() { showBuffering(false); hideOffline(); });
-        video.addEventListener('play', function() { updatePlayBtn(true); });
-        video.addEventListener('pause', function() { updatePlayBtn(false); });
-
+        video.addEventListener('waiting', function() { show('hkBuffering'); });
+        video.addEventListener('playing', function() { hide('hkBuffering'); hide('hkOffline'); });
+        video.addEventListener('play', function() { setPlayIcon(true); });
+        video.addEventListener('pause', function() { setPlayIcon(false); });
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = LLHLS_URL;
-        video.addEventListener('loadedmetadata', function() {
-          video.play().catch(function() {});
-        });
+        video.addEventListener('loadedmetadata', function() { video.play().catch(function(){}); });
       } else {
-        showOffline();
+        show('hkOffline');
       }
-
       startHeartbeat();
     }
 
-    /* ── Quality Menu ── */
+    function show(id) { var e = $(id); if (e) e.classList.remove('hidden'); }
+    function hide(id) { var e = $(id); if (e) e.classList.add('hidden'); }
+
     function buildQualityMenu(levels) {
-      var menu = document.getElementById('hkQualityMenu');
+      var menu = $('hkQualityMenu');
       if (!menu) return;
       menu.innerHTML = '';
-
-      var autoItem = document.createElement('div');
-      autoItem.className = 'hk-quality-item active';
-      autoItem.setAttribute('data-level', '-1');
-      autoItem.innerHTML = '<span class="hk-qcheck"></span><span>تلقائي</span>';
-      autoItem.onclick = function() { setQuality(-1); };
-      menu.appendChild(autoItem);
-
-      var maxBitrate = 0;
-      for (var i = 0; i < levels.length; i++) {
-        if (levels[i].bitrate > maxBitrate) maxBitrate = levels[i].bitrate;
-      }
-
+      var maxBps = 0;
+      for (var i = 0; i < levels.length; i++) { if (levels[i].bitrate > maxBps) maxBps = levels[i].bitrate; }
       var sorted = [];
       for (var i = 0; i < levels.length; i++) sorted.push(i);
       sorted.sort(function(a, b) { return levels[b].bitrate - levels[a].bitrate; });
 
+      addQItem(menu, -1, 'تلقائي', true);
       for (var j = 0; j < sorted.length; j++) {
         (function(idx) {
           var lev = levels[idx];
-          var label;
-          if (lev.bitrate === maxBitrate && !lev.height) label = 'مصدر';
-          else if (lev.bitrate === maxBitrate) label = 'مصدر';
-          else if (lev.height) label = lev.height + 'p';
-          else label = Math.round(lev.bitrate / 1000) + ' kbps';
-          var item = document.createElement('div');
-          item.className = 'hk-quality-item';
-          item.setAttribute('data-level', idx);
-          item.innerHTML = '<span class="hk-qcheck"></span><span>' + label + '</span>';
-          item.onclick = function() { setQuality(idx); };
-          menu.appendChild(item);
+          var label = lev.bitrate === maxBps ? 'مصدر' : (lev.height ? lev.height + 'p' : Math.round(lev.bitrate / 1000) + ' kbps');
+          addQItem(menu, idx, label, false);
         })(sorted[j]);
       }
     }
 
-    function setQuality(level) {
-      currentLevel = level;
-      if (hls) {
-        hls.currentLevel = level;
-      }
-      var items = document.querySelectorAll('.hk-quality-item');
-      var label = document.getElementById('hkQLabel');
-      items.forEach(function(item) {
-        var lv = parseInt(item.getAttribute('data-level'));
-        item.classList.toggle('active', lv === level);
-      });
-      if (label) {
-        if (level === -1) {
-          label.textContent = 'HD';
-        } else if (hls && hls.levels && hls.levels[level]) {
-          label.textContent = hls.levels[level].height ? (hls.levels[level].height + 'p') : 'مصدر';
-        }
-      }
-      updateStats();
+    function addQItem(menu, level, label, active) {
+      var d = document.createElement('div');
+      d.className = 'hk-quality-item' + (active ? ' active' : '');
+      d.setAttribute('data-level', level);
+      d.innerHTML = '<span class="hk-qcheck"></span><span>' + label + '</span>';
+      d.onclick = function() { setQuality(level); };
+      menu.appendChild(d);
     }
 
-    /* ── Controls ── */
-    function showBuffering(show) {
-      var el = document.getElementById('hkBuffering');
-      if (el) el.classList.toggle('hidden', !show);
+    function setQuality(level) {
+      currentLevel = level;
+      if (hls) hls.currentLevel = level;
+      document.querySelectorAll('.hk-quality-item').forEach(function(item) {
+        item.classList.toggle('active', parseInt(item.getAttribute('data-level')) === level);
+      });
+      var lbl = $('hkQLabel');
+      if (lbl) {
+        if (level === -1) lbl.textContent = 'HD';
+        else if (hls && hls.levels && hls.levels[level]) lbl.textContent = hls.levels[level].height ? (hls.levels[level].height + 'p') : 'مصدر';
+      }
+      updateStats();
+      var qm = $('hkQualityMenu'); if (qm) qm.classList.remove('open');
     }
-    function showBigPlay() {
-      var el = document.getElementById('hkBigPlay');
-      if (el) el.classList.remove('hidden');
-    }
-    function hideBigPlay() {
-      var el = document.getElementById('hkBigPlay');
-      if (el) el.classList.add('hidden');
-    }
-    function showOffline() {
-      var el = document.getElementById('hkOffline');
-      if (el) el.classList.remove('hidden');
-    }
-    function hideOffline() {
-      var el = document.getElementById('hkOffline');
-      if (el) el.classList.add('hidden');
-    }
-    function updatePlayBtn(playing) {
-      var pi = document.getElementById('hkPlayIcon');
-      var pa = document.getElementById('hkPauseIcon');
+
+    function setPlayIcon(playing) {
+      var pi = $('hkPlayIcon'), pa = $('hkPauseIcon');
       if (pi) pi.style.display = playing ? 'none' : 'block';
       if (pa) pa.style.display = playing ? 'block' : 'none';
     }
 
     function updateStats() {
       if (!hls || !video) return;
-      var qEl = document.getElementById('hkStatQuality');
-      var rEl = document.getElementById('hkStatRes');
-      var bEl = document.getElementById('hkStatBuffer');
-      var brEl = document.getElementById('hkStatBitrate');
-      if (qEl) qEl.textContent = currentLevel === -1 ? 'تلقائي' : (hls.levels[currentLevel] ? (hls.levels[currentLevel].height ? (hls.levels[currentLevel].height + 'p') : 'مصدر') : '—');
-      if (rEl) rEl.textContent = (video.videoWidth || '?') + 'x' + (video.videoHeight || '?');
-      if (bEl) bEl.textContent = video.buffered.length ? (video.buffered.end(video.buffered.length - 1) - video.currentTime).toFixed(1) + 's' : '—';
-      if (brEl && hls.levels && hls.currentLevel >= 0) {
-        brEl.textContent = Math.round(hls.levels[hls.currentLevel].bitrate / 1000) + ' kbps';
-      }
+      var q = $('hkStatQuality'), r = $('hkStatRes'), b = $('hkStatBuffer'), br = $('hkStatBitrate');
+      if (q) q.textContent = currentLevel === -1 ? 'تلقائي' : (hls.levels[currentLevel] ? (hls.levels[currentLevel].height ? (hls.levels[currentLevel].height + 'p') : 'مصدر') : '—');
+      if (r) r.textContent = (video.videoWidth || '?') + '×' + (video.videoHeight || '?');
+      if (b) b.textContent = video.buffered.length ? (video.buffered.end(video.buffered.length - 1) - video.currentTime).toFixed(1) + 's' : '—';
+      if (br && hls.levels && hls.currentLevel >= 0) br.textContent = Math.round(hls.levels[hls.currentLevel].bitrate / 1000) + ' kbps';
     }
 
-    /* ── Event Bindings ── */
     function bindControls() {
-      /* Play/Pause */
-      var playBtn = document.getElementById('hkPlayBtn');
-      var bigPlay = document.getElementById('hkBigPlay');
       function togglePlay() {
         if (!video) return;
-        hideBigPlay();
-        if (video.paused) { video.play().catch(function() {}); }
-        else { video.pause(); }
+        hide('hkBigPlay');
+        if (video.paused) video.play().catch(function(){});
+        else video.pause();
       }
-      if (playBtn) playBtn.onclick = togglePlay;
-      if (bigPlay) bigPlay.onclick = togglePlay;
-      if (video) video.onclick = togglePlay;
+      var pb = $('hkPlayBtn'), bp = $('hkBigPlay'), vid = $('hkVideo');
+      if (pb) pb.onclick = togglePlay;
+      if (bp) bp.onclick = togglePlay;
+      if (vid) vid.onclick = togglePlay;
 
-      /* Volume */
-      var volBtn = document.getElementById('hkVolBtn');
-      var volSlider = document.getElementById('hkVolSlider');
-      if (volBtn) volBtn.onclick = function() {
+      var vb = $('hkVolBtn'), vs = $('hkVolSlider');
+      if (vb) vb.onclick = function() {
         if (!video) return;
         video.muted = !video.muted;
-        var vi = document.getElementById('hkVolIcon');
-        var mi = document.getElementById('hkMuteIcon');
+        var vi = $('hkVolIcon'), mi = $('hkMuteIcon');
         if (vi) vi.style.display = video.muted ? 'none' : 'block';
         if (mi) mi.style.display = video.muted ? 'block' : 'none';
       };
-      if (volSlider) volSlider.oninput = function() {
+      if (vs) vs.oninput = function() {
         if (video) { video.volume = this.value / 100; video.muted = false; }
-        var vi = document.getElementById('hkVolIcon');
-        var mi = document.getElementById('hkMuteIcon');
+        var vi = $('hkVolIcon'), mi = $('hkMuteIcon');
         if (vi) vi.style.display = 'block';
         if (mi) mi.style.display = 'none';
       };
 
-      /* Quality */
-      var qLabel = document.getElementById('hkQLabel');
-      var qMenu = document.getElementById('hkQualityMenu');
-      if (qLabel) qLabel.onclick = function(e) {
-        e.stopPropagation();
-        qMenu.classList.toggle('open');
-      };
-      document.addEventListener('click', function() { if (qMenu) qMenu.classList.remove('open'); });
+      var ql = $('hkQLabel'), qm = $('hkQualityMenu');
+      if (ql) ql.onclick = function(e) { e.stopPropagation(); qm.classList.toggle('open'); };
+      document.addEventListener('click', function() { if (qm) qm.classList.remove('open'); });
 
-      /* Stats */
-      var statsBtn = document.getElementById('hkStatsBtn');
-      var statsPanel = document.getElementById('hkStats');
-      if (statsBtn) statsBtn.onclick = function(e) {
-        e.stopPropagation();
-        statsPanel.classList.toggle('show');
-        updateStats();
-      };
-      document.addEventListener('click', function() { if (statsPanel) statsPanel.classList.remove('show'); });
+      var sb = $('hkStatsBtn'), sp = $('hkStats');
+      if (sb) sb.onclick = function(e) { e.stopPropagation(); sp.classList.toggle('show'); updateStats(); };
+      document.addEventListener('click', function() { if (sp) sp.classList.remove('show'); });
 
-      /* Fullscreen */
-      var fsBtn = document.getElementById('hkFullscreenBtn');
-      if (fsBtn) fsBtn.onclick = function() {
+      var fb = $('hkFullscreenBtn');
+      if (fb) fb.onclick = function() {
         var box = document.querySelector('.player-box');
-        if (document.fullscreenElement) { document.exitFullscreen(); }
-        else if (box) { box.requestFullscreen().catch(function() {}); }
+        if (document.fullscreenElement) document.exitFullscreen();
+        else if (box) box.requestFullscreen().catch(function(){});
       };
       document.addEventListener('fullscreenchange', function() {
-        var fi = document.getElementById('hkFsIcon');
-        var fe = document.getElementById('hkFsExitIcon');
         var isFs = !!document.fullscreenElement;
+        var fi = $('hkFsIcon'), fe = $('hkFsExitIcon');
         if (fi) fi.style.display = isFs ? 'none' : 'block';
         if (fe) fe.style.display = isFs ? 'block' : 'none';
       });
 
-      /* Auto-hide controls */
-      var playerEl = document.getElementById('hkPlayer');
-      var controls = document.getElementById('hkControls');
-      if (playerEl) {
-        playerEl.addEventListener('mousemove', function() {
-          controls.classList.add('hk-controls-show');
-          clearTimeout(controlsTimeout);
-          controlsTimeout = setTimeout(function() { controls.classList.remove('hk-controls-show'); }, 3000);
-        });
-      }
+      var pe = $('hkPlayer'), ctrl = $('hkControls');
+      if (pe) pe.addEventListener('mousemove', function() {
+        ctrl.classList.add('show');
+        clearTimeout(controlsTimeout);
+        controlsTimeout = setTimeout(function() { ctrl.classList.remove('show'); }, 3000);
+      });
 
-      /* Stats update interval */
       setInterval(updateStats, 2000);
     }
 
-    /* ── Heartbeat ── */
     function startHeartbeat() {
       if (heartbeatTimer) clearInterval(heartbeatTimer);
       heartbeatTimer = setInterval(function() {
         var quality = 'auto';
-        if (currentLevel >= 0 && hls && hls.levels && hls.levels[currentLevel]) {
+        if (currentLevel >= 0 && hls && hls.levels && hls.levels[currentLevel])
           quality = (hls.levels[currentLevel].height || '?') + 'p';
-        }
         fetch('/tracker-api/heartbeat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ quality: quality, player_type: 'main' }),
-          keepalive: true
-        }).catch(function() {});
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ quality: quality, player_type: 'main' }), keepalive: true
+        }).catch(function(){});
       }, 15000);
     }
 
-    /* ── Init ── */
-    document.addEventListener('DOMContentLoaded', function() {
-      bindControls();
-    });
-
-    window._initHlsPlayer = function() {
-      createPlayer();
-    };
+    document.addEventListener('DOMContentLoaded', bindControls);
+    window._initHlsPlayer = createPlayer;
   })();
 
-  /* ═══ PASSWORD PROTECTION ═══ */
-  var _passwordVerified = false;
-  var _passwordCheckDone = false;
+  var _passwordVerified = false, _passwordCheckDone = false;
 
-  function _showPasswordOverlay() {
-    var ov = document.getElementById('password-overlay');
-    if (ov) ov.style.display = 'flex';
-  }
-  function _hidePasswordOverlay() {
-    var ov = document.getElementById('password-overlay');
-    if (ov) ov.style.display = 'none';
-  }
+  function _showPasswordOverlay() { var o = $('password-overlay'); if (o) o.style.display = 'flex'; }
+  function _hidePasswordOverlay() { var o = $('password-overlay'); if (o) o.style.display = 'none'; }
+  function $(id) { return document.getElementById(id); }
 
   function _getTurnstileToken() {
     if (!window.turnstile) return '';
-    try {
-      var el = document.querySelector('#cf-turnstile-container .cf-turnstile-response, [name="cf-turnstile-response"]');
-      return el ? el.value : '';
-    } catch(e) { return ''; }
+    try { var el = document.querySelector('#cf-turnstile-container .cf-turnstile-response, [name="cf-turnstile-response"]'); return el ? el.value : ''; }
+    catch(e) { return ''; }
   }
 
   function verifyPassword(pass, silent) {
     var payload = { password: pass };
     var t = _getTurnstileToken();
     if (t) payload['cf-turnstile-response'] = t;
-
     fetch('/tracker-api/stream/password-verify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+    }).then(function(r) { return r.json(); }).then(function(data) {
       if (data.valid) {
         localStorage.setItem('stream_password', pass);
         _passwordVerified = true;
@@ -587,114 +424,75 @@
       } else {
         localStorage.removeItem('stream_password');
         if (!silent) {
-          var err = document.getElementById('password-error');
-          if (err) err.style.display = 'block';
-          var inp = document.getElementById('stream-password-input');
-          if (inp) { inp.style.borderColor = '#ff5555'; inp.value = ''; }
-        } else {
-          _showPasswordOverlay();
-        }
+          var err = $('password-error'); if (err) err.style.display = 'block';
+          var inp = $('stream-password-input'); if (inp) { inp.style.borderColor = '#ff5555'; inp.value = ''; }
+        } else _showPasswordOverlay();
       }
-    }).catch(function() {
-      window._initHlsPlayer();
-    });
+    }).catch(function() { window._initHlsPlayer(); });
   }
 
   function initPlayer() {
     if (_passwordCheckDone) return;
-    fetch('/tracker-api/stream/password-check', { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}', cache: 'no-store' })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        _passwordCheckDone = true;
-        if (data.protected) {
-          var saved = localStorage.getItem('stream_password') || '';
-          if (saved) { verifyPassword(saved, true); }
-          else { _showPasswordOverlay(); }
-        } else {
-          _passwordVerified = true;
-          window._initHlsPlayer();
-        }
-      }).catch(function() {
-        _passwordCheckDone = true;
-        _passwordVerified = true;
-        window._initHlsPlayer();
-      });
+    fetch('/tracker-api/stream/password-check', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}', cache: 'no-store' })
+    .then(function(r) { return r.json(); }).then(function(data) {
+      _passwordCheckDone = true;
+      if (data.protected) {
+        var saved = localStorage.getItem('stream_password') || '';
+        if (saved) verifyPassword(saved, true);
+        else _showPasswordOverlay();
+      } else { _passwordVerified = true; window._initHlsPlayer(); }
+    }).catch(function() { _passwordCheckDone = true; _passwordVerified = true; window._initHlsPlayer(); });
   }
 
   function submitStreamPassword() {
-    var pass = document.getElementById('stream-password-input').value;
+    var pass = $('stream-password-input').value;
     if (pass) verifyPassword(pass, false);
   }
 
-  /* ═══ THEATER MODE ═══ */
   function toggleTheater() {
     document.body.classList.toggle('player-compact');
-    var isCompact = document.body.classList.contains('player-compact');
-    localStorage.setItem('theater_mode', isCompact ? 'compact' : 'wide');
-    _updateTheaterBtn();
+    localStorage.setItem('theater_mode', document.body.classList.contains('player-compact') ? 'compact' : 'wide');
+    updateTheaterBtn();
   }
-  function _updateTheaterBtn() {
-    var isCompact = document.body.classList.contains('player-compact');
-    var w = document.getElementById('thaterIconWide');
-    var c = document.getElementById('thaterIconCompact');
-    var lbl = document.getElementById('thaterLabel');
-    if (w) w.style.display = isCompact ? 'block' : 'none';
-    if (c) c.style.display = isCompact ? 'none' : 'block';
-    if (lbl) lbl.textContent = isCompact ? 'توسيط' : 'عرض كامل';
+  function updateTheaterBtn() {
+    var isC = document.body.classList.contains('player-compact');
+    var w = $('theaterIconWide'), c = $('theaterIconCompact'), l = $('theaterLabel');
+    if (w) w.style.display = isC ? 'block' : 'none';
+    if (c) c.style.display = isC ? 'none' : 'block';
+    if (l) l.textContent = isC ? 'توسيط' : 'عرض كامل';
   }
 
-  /* ═══ HEADER MATCH CHIP ═══ */
   var _matchTimer = null, _liveMatchTimer = null, _liveMatchData = null, _liveMatchStartUtc = null;
   var _upcomingUtc = null, _curIsLive = false, _kickoffFired = false;
 
   function _hmTime(utc) { try { return window.saudiTime(utc); } catch(e) { return ''; } }
-
   function _formatMatchTime(ms) {
-    var totalSec = Math.floor(ms / 1000);
-    var half = Math.floor(totalSec / 2700);
-    var min = Math.floor((totalSec % 2700) / 60);
-    return (half >= 1 ? (45 + min) : min) + ':' + String(totalSec % 60).padStart(2, '0');
+    var ts = Math.floor(ms / 1000);
+    var half = Math.floor(ts / 2700);
+    var min = Math.floor((ts % 2700) / 60);
+    return (half >= 1 ? (45 + min) : min) + ':' + String(ts % 60).padStart(2, '0');
   }
 
   function _fillChip(match, state) {
-    var chipEl = document.getElementById('matchChip');
-    var tagEl = document.getElementById('chipTag');
-    var hCrest = document.getElementById('chipHCrest');
-    var hName = document.getElementById('chipHName');
-    var center = document.getElementById('chipCenter');
-    var aCrest = document.getElementById('chipACrest');
-    var aName = document.getElementById('chipAName');
-    var cdEl = document.getElementById('chipCd');
-
-    if (!chipEl || !match) { if (chipEl) chipEl.style.display = 'none'; return; }
+    var ce = $('matchChip'), te = $('chipTag');
+    var hc = $('chipHCrest'), hn = $('chipHName'), cc = $('chipCenter');
+    var ac = $('chipACrest'), an = $('chipAName'), cd = $('chipCd');
+    if (!ce || !match) { if (ce) ce.style.display = 'none'; return; }
     var isLive = (state === 'live'), isDone = (state === 'done');
     var h = match.homeTeam || {}, a = match.awayTeam || {}, sc = match.score || {};
-
-    hCrest.src = h.crest || '';
-    hName.textContent = teamAr(h.shortName || h.name || '');
-    aCrest.src = a.crest || '';
-    aName.textContent = teamAr(a.shortName || a.name || '');
-
-    tagEl.className = 'chip-tag';
-    if (isLive) { tagEl.textContent = 'مباشر'; tagEl.classList.add('live-tag'); }
-    else if (isDone) { tagEl.textContent = 'انتهت'; tagEl.classList.add('done-tag'); }
-    else { tagEl.textContent = 'التالية'; tagEl.classList.add('upcoming-tag'); }
-
-    if (isLive) {
-      center.className = 'chip-score live-score';
-      center.textContent = (sc.home != null ? sc.home : 0) + ' - ' + (sc.away != null ? sc.away : 0);
-    } else if (isDone) {
-      center.className = 'chip-score';
-      center.textContent = (sc.home != null ? sc.home : 0) + ' - ' + (sc.away != null ? sc.away : 0);
-    } else {
-      center.className = 'chip-time';
-      center.textContent = _hmTime(match.utcDate);
-    }
-
-    if (cdEl) cdEl.style.display = 'none';
-    chipEl.classList.toggle('live-chip', isLive);
-    chipEl.classList.toggle('done-chip', isDone);
-    chipEl.style.display = 'flex';
+    hc.src = h.crest || ''; hn.textContent = teamAr(h.shortName || h.name || '');
+    ac.src = a.crest || ''; an.textContent = teamAr(a.shortName || a.name || '');
+    te.className = 'chip-tag';
+    if (isLive) { te.textContent = 'مباشر'; te.classList.add('live-tag'); }
+    else if (isDone) { te.textContent = 'انتهت'; te.classList.add('done-tag'); }
+    else { te.textContent = 'التالية'; te.classList.add('upcoming-tag'); }
+    if (isLive) { cc.className = 'chip-score live-score'; cc.textContent = (sc.home != null ? sc.home : 0) + ' - ' + (sc.away != null ? sc.away : 0); }
+    else if (isDone) { cc.className = 'chip-score'; cc.textContent = (sc.home != null ? sc.home : 0) + ' - ' + (sc.away != null ? sc.away : 0); }
+    else { cc.className = 'chip-time'; cc.textContent = _hmTime(match.utcDate); }
+    if (cd) cd.style.display = 'none';
+    ce.classList.toggle('live-chip', isLive);
+    ce.classList.toggle('done-chip', isDone);
+    ce.style.display = 'flex';
   }
 
   function updateHeaderMatch(matches) {
@@ -704,21 +502,17 @@
     var live = sorted.filter(function(m) { return STATUS_LIVE[m.status]; });
     var upcoming = sorted.filter(function(m) { return !STATUS_DONE[m.status] && !STATUS_LIVE[m.status] && new Date(m.utcDate).getTime() > now - 60000; });
     var finished = sorted.filter(function(m) { return STATUS_DONE[m.status]; });
-
     var primary = null, pstate = null;
     if (live.length) { primary = live[0]; pstate = 'live'; }
     else if (upcoming.length) { primary = upcoming[0]; pstate = 'upcoming'; }
     else if (finished.length) { primary = finished[finished.length - 1]; pstate = 'done'; }
-
     _fillChip(primary, pstate);
-    var dot = document.getElementById('hdrLiveDot');
+    var dot = $('hdrLiveDot');
     if (dot) dot.classList.toggle('on', pstate === 'live');
-
     _curIsLive = (pstate === 'live');
     _liveMatchData = primary;
     _upcomingUtc = (pstate === 'upcoming' && primary) ? primary.utcDate : null;
     _kickoffFired = false;
-
     if (_curIsLive && primary) {
       _liveMatchStartUtc = new Date(primary.utcDate).getTime();
       _startLiveClock();
@@ -732,10 +526,9 @@
     _liveMatchTimer = setInterval(function() {
       if (!_liveMatchStartUtc || !_liveMatchData) return;
       var elapsed = Date.now() - _liveMatchStartUtc;
-      var center = document.getElementById('chipCenter');
-      var cdEl = document.getElementById('chipCd');
-      if (center) { var sc = _liveMatchData.score || {}; center.textContent = (sc.home != null ? sc.home : 0) + ' - ' + (sc.away != null ? sc.away : 0); }
-      if (cdEl) { cdEl.textContent = _formatMatchTime(elapsed); cdEl.style.display = 'inline-flex'; }
+      var cc = $('chipCenter'), cd = $('chipCd');
+      if (cc) { var sc = _liveMatchData.score || {}; cc.textContent = (sc.home != null ? sc.home : 0) + ' - ' + (sc.away != null ? sc.away : 0); }
+      if (cd) { cd.textContent = _formatMatchTime(elapsed); cd.style.display = 'inline-flex'; }
     }, 1000);
   }
   function _stopLiveClock() { if (_liveMatchTimer) { clearInterval(_liveMatchTimer); _liveMatchTimer = null; } }
@@ -743,71 +536,54 @@
   var _autoRefreshTimer = null;
   function _startAutoRefresh() { _stopAutoRefresh(); _autoRefreshTimer = setInterval(function() { if (window.loadMatches) loadMatches(); }, 30000); }
   function _stopAutoRefresh() { if (_autoRefreshTimer) { clearInterval(_autoRefreshTimer); _autoRefreshTimer = null; } }
-
   function _scheduleSmartRefresh() {
     if (_matchTimer) clearTimeout(_matchTimer);
     var iv = _curIsLive ? 60000 : (_upcomingUtc ? ((new Date(_upcomingUtc).getTime() - Date.now() < 300000) ? 30000 : 300000) : 300000);
-    _matchTimer = setTimeout(function(){ if (window.loadMatches) loadMatches(); }, iv);
+    _matchTimer = setTimeout(function() { if (window.loadMatches) loadMatches(); }, iv);
   }
 
-  (function(){
+  (function() {
     window.loadMatches = function() {
-      fetch('/tracker-api/matches')
-        .then(function(r) { return r.json(); })
-        .then(function(d) { updateHeaderMatch(d.matches || []); })
-        .catch(function() { _scheduleSmartRefresh(); });
+      fetch('/tracker-api/matches').then(function(r) { return r.json(); }).then(function(d) { updateHeaderMatch(d.matches || []); }).catch(function() { _scheduleSmartRefresh(); });
     };
-    document.addEventListener('DOMContentLoaded', function() {
-      loadMatches();
-      initPlayer();
-    });
+    document.addEventListener('DOMContentLoaded', function() { loadMatches(); initPlayer(); });
   })();
 
-  /* ── 1-Second Interval ── */
   setInterval(function() {
     var now = Date.now();
     if (_upcomingUtc && !_curIsLive) {
       var diff = new Date(_upcomingUtc).getTime() - now;
-      var cdEl = document.getElementById('chipCd');
-      var chipEl = document.getElementById('matchChip');
-      if (cdEl && chipEl && chipEl.style.display !== 'none') {
+      var cd = $('chipCd'), ce = $('matchChip');
+      if (cd && ce && ce.style.display !== 'none') {
         if (diff > 0) {
-          var h = Math.floor(diff / 3600000);
-          var m = Math.floor((diff % 3600000) / 60000);
-          var s = Math.floor((diff % 60000) / 1000);
-          cdEl.textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
-          cdEl.style.display = 'inline-flex';
-          cdEl.classList.toggle('urgent', diff < 300000);
-        } else { cdEl.style.display = 'none'; }
+          var h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
+          cd.textContent = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+          cd.style.display = 'inline-flex';
+          cd.classList.toggle('urgent', diff < 300000);
+        } else cd.style.display = 'none';
       }
     }
     if (_upcomingUtc) { var d = new Date(_upcomingUtc).getTime() - now; if (d <= 0 && !_kickoffFired) { _kickoffFired = true; if (window.loadMatches) loadMatches(); } }
   }, 1000);
 
-  /* ═══ VIEWER COUNT (SSE) ═══ */
   var _sseRetries = 0;
   function connectSSE() {
-    if (window.EventSource) {
-      var es = new EventSource('/tracker-api/public/stats/live');
-      es.onmessage = function(e) {
-        _sseRetries = 0;
-        try {
-          var d = JSON.parse(e.data);
-          var hv = document.getElementById('headViewersNum');
-          if (hv) hv.textContent = d.viewers || 0;
-          var dot = document.getElementById('hdrLiveDot');
-          if (dot) dot.classList.toggle('on', !!d.online);
-        } catch(err) {}
-      };
-      es.onerror = function() { es.close(); _sseRetries++; setTimeout(connectSSE, Math.min(_sseRetries * 3000, 30000)); };
-    }
+    if (!window.EventSource) return;
+    var es = new EventSource('/tracker-api/public/stats/live');
+    es.onmessage = function(e) {
+      _sseRetries = 0;
+      try {
+        var d = JSON.parse(e.data);
+        var hv = $('headViewersNum'); if (hv) hv.textContent = d.viewers || 0;
+        var dot = $('hdrLiveDot'); if (dot) dot.classList.toggle('on', !!d.online);
+      } catch(err) {}
+    };
+    es.onerror = function() { es.close(); _sseRetries++; setTimeout(connectSSE, Math.min(_sseRetries * 3000, 30000)); };
   }
 
-  /* ═══ INIT ═══ */
-  (function(){
-    var saved = localStorage.getItem('theater_mode');
-    if (saved === 'wide') document.body.classList.remove('player-compact');
-    _updateTheaterBtn();
+  (function() {
+    if (localStorage.getItem('theater_mode') === 'wide') document.body.classList.remove('player-compact');
+    updateTheaterBtn();
     connectSSE();
   })();
 
@@ -816,7 +592,6 @@
   }
   </script>
 
-  <!-- Password Overlay -->
   <div id="password-overlay">
     <div>
       <div class="pw-logo">H &amp; K</div>
